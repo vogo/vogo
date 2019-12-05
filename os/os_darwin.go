@@ -1,4 +1,4 @@
-//author: wongoo
+// Copyright 2019 The vogo Authors. All rights reserved.
 
 package vos
 

@@ -1,5 +1,4 @@
-//author: wongoo
-//date: 20190628
+// Copyright 2019 The vogo Authors. All rights reserved.
 
 package vioutil
 

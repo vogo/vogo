@@ -1,10 +1,11 @@
-//author: wongoo
-//date: 20190830
+// Copyright 2019 The vogo Authors. All rights reserved.
 
 package vnet
 
 import (
 	"testing"
+
+	vstrings "github.com/vogo/vogo/strings"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -20,6 +21,6 @@ docker0	000011AC	00000000	0001	0	0	0	0000FFFF	0	0	0`
 	faces := parseRouteInterfaces([]byte(data))
 
 	assert.Equal(t, 2, len(faces))
-	assert.True(t, strutil.ContainsIn(faces, "eth0"))
-	assert.True(t, strutil.ContainsIn(faces, "docker0"))
+	assert.True(t, vstrings.ContainsIn(faces, "eth0"))
+	assert.True(t, vstrings.ContainsIn(faces, "docker0"))
 }
