@@ -1,4 +1,4 @@
-//author: liu.yang02@ucarinc.com
+//author: wongoo
 
 package vos
 
