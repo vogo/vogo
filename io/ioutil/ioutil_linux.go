@@ -9,7 +9,6 @@ import (
 	"syscall"
 
 	"github.com/vogo/logger"
-	"github.com/wongoo/delivery-system/util/sysutil"
 )
 
 func LockFile(file *os.File) error {
