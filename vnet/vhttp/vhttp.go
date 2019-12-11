@@ -11,7 +11,7 @@ import (
 	"net/url"
 	"time"
 
-	vioutil "github.com/vogo/vogo/io/ioutil"
+	"github.com/vogo/vogo/vio/vioutil"
 
 	"github.com/vogo/logger"
 )

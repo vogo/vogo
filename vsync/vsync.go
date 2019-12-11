@@ -13,3 +13,13 @@ func IsChanClosed(c chan struct{}) bool {
 		return false
 	}
 }
+
+func SafeClosed(c chan struct{}) {
+	if !IsChanClosed(c) {
+		defer func() {
+			_ = recover()
+		}()
+
+		close(c)
+	}
+}

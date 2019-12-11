@@ -18,7 +18,7 @@ import (
 	"time"
 
 	"github.com/vogo/logger"
-	vstrings "github.com/vogo/vogo/strings"
+	"github.com/vogo/vogo/vstrings"
 )
 
 const (

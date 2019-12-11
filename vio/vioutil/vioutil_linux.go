@@ -10,6 +10,8 @@ import (
 	"strconv"
 	"syscall"
 
+	"github.com/vogo/vogo/vos"
+
 	"github.com/vogo/logger"
 )
 
@@ -32,7 +34,7 @@ func Touch(fileName, userName string) error {
 
 		defer f.Close()
 
-		if userName != "" && userName != sysutil.CurrUserHome() {
+		if userName != "" && userName != vos.CurrUserHome() {
 			u, err := user.Lookup(userName)
 			if err != nil {
 				logger.Infof("failed to change file owner %s, error: %v", fileName, err)

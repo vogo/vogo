@@ -13,9 +13,8 @@ import (
 	"strings"
 	"time"
 
-	vbytes "github.com/vogo/vogo/bytes"
-
 	"github.com/vogo/logger"
+	"github.com/vogo/vogo/vbytes"
 )
 
 // ReadFile read file to string

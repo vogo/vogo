@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	vos "github.com/vogo/vogo/os"
+	"github.com/vogo/vogo/vos"
 )
 
 // LocalPortExist check whether local port exist

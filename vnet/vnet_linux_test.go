@@ -5,7 +5,7 @@ package vnet
 import (
 	"testing"
 
-	vstrings "github.com/vogo/vogo/strings"
+	"github.com/vogo/vogo/vstrings"
 
 	"github.com/stretchr/testify/assert"
 )
