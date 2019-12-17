@@ -4,12 +4,9 @@ package vioutil
 
 import (
 	"bufio"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
-	"path/filepath"
-	"sort"
 	"strings"
 	"time"
 
@@ -41,14 +38,6 @@ func IsDirEmpty(dirPath string) bool {
 
 	return true
 }
-func MkdirByRecursive(dirPath string) {
-	logger.Infof("mkdir %s", dirPath)
-	err := os.MkdirAll(dirPath, os.ModePerm)
-
-	if err != nil {
-		logger.Infof("mkdir business dir fail, path: %s, err: %s", dirPath, err.Error())
-	}
-}
 
 func IsDir(path string) bool {
 	s, err := os.Stat(path)
@@ -60,7 +49,12 @@ func IsDir(path string) bool {
 }
 
 func IsFile(path string) bool {
-	return !IsDir(path)
+	s, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+
+	return !s.IsDir()
 }
 
 func CopyFile(dstName, srcName string) (written int64, err error) {
@@ -125,36 +119,21 @@ func AppendFile(filePath string, data []byte, perm os.FileMode) error {
 	return err
 }
 
-// LinkLatest link the latest
-func LinkLatest(dirPath, targetDirPath, prefix, suffix string) error {
-	files, err := ListFileNames(dirPath, prefix, suffix)
-	if err != nil {
-		return err
-	}
-
-	if len(files) == 0 {
-		return fmt.Errorf("can't find file with prefix [%s], suffix [%s] in directory %s", prefix, suffix, dirPath)
-	}
-
-	sort.Strings(files)
-	sourceFilePath := filepath.Join(dirPath, files[len(files)-1])
-	sourceFile, err := os.Stat(sourceFilePath)
-
-	if err != nil {
-		return err
-	}
-
-	targetFileName := "latest"
-	if !sourceFile.IsDir() {
-		targetFileName = prefix + "-latest" + suffix
-	}
-
-	targetFilePath := filepath.Join(targetDirPath, targetFileName)
-
+// LinkFile link file
+func LinkFile(sourceFilePath, targetFilePath string) error {
 	logger.Infof("create symbolic link %s to %s", sourceFilePath, targetFilePath)
+
 	// remove the exists link file before create
-	if _, err := os.Lstat(targetFilePath); err == nil {
-		_ = os.Remove(targetFilePath)
+	if stat, err := os.Stat(targetFilePath); err == nil && stat != nil {
+		if stat.IsDir() {
+			if err := os.RemoveAll(targetFilePath); err != nil {
+				logger.Warnf("remove %s: %v", targetFilePath, err)
+			}
+		} else {
+			if err := os.Remove(targetFilePath); err != nil {
+				logger.Warnf("remove %s: %v", targetFilePath, err)
+			}
+		}
 	}
 
 	return os.Symlink(sourceFilePath, targetFilePath)
@@ -191,21 +170,6 @@ func ListFileNames(dirPath, prefix, suffix string) ([]string, error) {
 	}
 
 	return files, nil
-}
-
-// parse package name version
-func ParsePackageNameVersion(fileName string) (name, version string, ok bool) {
-	index := strings.LastIndex(fileName, "-")
-	if index <= 0 {
-		logger.Infof("invalid package name %s", fileName)
-		return "", "", false
-	}
-
-	name = fileName[:index]
-	version = fileName[index+1 : len(fileName)-4]
-	ok = true
-
-	return
 }
 
 // Move file

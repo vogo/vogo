@@ -14,49 +14,28 @@ import (
 
 func TestLinkLatest(t *testing.T) {
 	tempDir := os.TempDir()
-	targetDir := filepath.Join(tempDir, "test_link_latest")
-	err := os.Mkdir(targetDir, os.ModePerm)
-	assert.Nil(t, err)
 
-	prefix := "temp-test-file"
-	suffix := ".txt"
+	sourceFile := filepath.Join(tempDir, "a.txt")
+	linkFile := filepath.Join(tempDir, "b.txt")
 
-	versionFile1 := filepath.Join(tempDir, prefix+"-1.0"+suffix)
-	versionFile2 := filepath.Join(tempDir, prefix+"-2.0"+suffix)
+	assert.Nil(t, ioutil.WriteFile(sourceFile, []byte("test"), 0666))
 
-	err = ioutil.WriteFile(versionFile1, []byte("test"), 0666)
-	assert.Nil(t, err)
+	assert.Nil(t, LinkFile(sourceFile, linkFile))
+	assert.Nil(t, LinkFile(sourceFile, linkFile))
 
-	err = ioutil.WriteFile(versionFile2, []byte("test"), 0666)
-	assert.Nil(t, err)
+	_ = os.Remove(linkFile)
+	_ = os.Remove(sourceFile)
 
-	// -----> create first
-	err = LinkLatest(tempDir, targetDir, prefix, suffix)
-	assert.Nil(t, err)
+	sourceDir := filepath.Join(tempDir, "d1")
+	linkDir := filepath.Join(tempDir, "d2")
 
-	latestFile := filepath.Join(targetDir, prefix+"-latest"+suffix)
-	_, err = os.Lstat(latestFile)
-	assert.Nil(t, err)
+	_ = os.Mkdir(sourceDir, 0777)
 
-	// -----> create again
-	err = LinkLatest(tempDir, targetDir, prefix, suffix)
-	assert.Nil(t, err)
+	assert.Nil(t, LinkFile(sourceDir, linkDir))
+	assert.Nil(t, LinkFile(sourceDir, linkDir))
 
-	latestFile = filepath.Join(targetDir, prefix+"-latest"+suffix)
-	_, err = os.Lstat(latestFile)
-	assert.Nil(t, err)
-
-	_ = os.Remove(latestFile)
-	_ = os.Remove(versionFile1)
-	_ = os.Remove(versionFile2)
-	_ = os.Remove(targetDir)
-}
-
-func TestParsePackageNameVersion(t *testing.T) {
-	name, version, ok := ParsePackageNameVersion("ucar-debug-module-1.2.0.1.jar")
-	assert.True(t, ok)
-	assert.Equal(t, "ucar-debug-module", name)
-	assert.Equal(t, "1.2.0.1", version)
+	_ = os.Remove(sourceDir)
+	_ = os.Remove(linkDir)
 }
 
 func TestDos2Unix(t *testing.T) {
