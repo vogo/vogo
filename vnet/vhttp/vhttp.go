@@ -118,3 +118,21 @@ func Get(rawURL string) ([]byte, error) {
 
 	return body, err
 }
+
+// IsConnectionError is http connection error
+func IsConnectionError(err error) bool {
+	switch err {
+	case http.ErrServerClosed, net.ErrWriteToConnected:
+		return true
+	default:
+		if _, ok := err.(*net.OpError); ok {
+			return true
+		}
+
+		if _, ok := err.(*url.Error); ok {
+			return true
+		}
+
+		return false
+	}
+}
