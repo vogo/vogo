@@ -197,7 +197,7 @@ func GetJavaHome(pid int) (string, error) {
 func ReadAllJavaProcessEnv() []map[string]string {
 	var processes []map[string]string
 
-	result, err := ExecShell("ps -o pid,cmd -e |grep java |grep -v grep")
+	result, err := Shell("ps -o pid,cmd -e |grep java |grep -v grep")
 
 	if err != nil {
 		return nil
