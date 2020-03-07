@@ -1,3 +1,5 @@
+// Copyright 2019 The vogo Authors. All rights reserved.
+
 package vsnowflake
 
 import (
@@ -11,13 +13,24 @@ import (
 
 var (
 	snowflakeStartTime = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-	machineIDFromIP    uint16
+	machineIDFetcher   = localIPMachineIDFetcher
 )
 
-// getUniqueMachineID  get the unique machine id
-// default get machine id from ip address.
+// MachineIDFetcher function for fetching machine id
 // NOTE: for a distributed system, it's better to register machine into a general center, which make sure the machine id is unique.
-func getUniqueMachineID() (uint16, error) {
+type MachineIDFetcher func() (uint16, error)
+
+// SetMachineIDFetcher set MachineIDFetcher
+func SetMachineIDFetcher(fetcher MachineIDFetcher) {
+	machineIDFetcher = fetcher
+}
+
+var (
+	machineIDFromIP uint16
+)
+
+// localIPMachineIDFetcher get machine id from local ip address.
+func localIPMachineIDFetcher() (uint16, error) {
 	if machineIDFromIP > 0 {
 		return machineIDFromIP, nil
 	}
@@ -45,7 +58,7 @@ func newSnowflake() *sonyflake.Sonyflake {
 		// If MachineID returns an error, Sonyflake is not created.
 		// If MachineID is nil, default MachineID is used.
 		// Default MachineID returns the lower 16 bits of the private IP address.
-		MachineID: getUniqueMachineID,
+		MachineID: machineIDFetcher,
 
 		// CheckMachineID validates the uniqueness of the machine ID.
 		// If CheckMachineID returns false, Sonyflake is not created.
