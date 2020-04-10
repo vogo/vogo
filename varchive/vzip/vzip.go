@@ -4,17 +4,16 @@ package vzip
 
 import (
 	"archive/zip"
+	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
-
-	"github.com/vogo/logger"
 )
 
 // Unzip will decompress a zip archive, moving all files and folders
 // within the zip file (parameter 1) to an output directory (parameter 2).
-func Unzip(src, dest string) error {
+func Unzip(src, destDir string) error {
 	r, err := zip.OpenReader(src)
 	if err != nil {
 		return err
@@ -22,22 +21,12 @@ func Unzip(src, dest string) error {
 	defer r.Close()
 
 	// Make File
-	if err := os.MkdirAll(dest, os.ModePerm); err != nil {
+	if err := os.MkdirAll(destDir, os.ModePerm); err != nil {
 		return err
 	}
 
 	for _, zipFile := range r.File {
-		// Check for ZipSlip
-		fileName := strings.ReplaceAll(zipFile.Name, "..", "")
-
-		if fileName != zipFile.Name {
-			logger.Infof("ignore zip file: %s", zipFile.Name)
-			continue
-		}
-
-		targetPath := filepath.Join(dest, fileName)
-
-		if err := writeZipFile(targetPath, zipFile); err != nil {
+		if err := unzipFile(destDir, zipFile); err != nil {
 			return err
 		}
 	}
@@ -45,9 +34,22 @@ func Unzip(src, dest string) error {
 	return nil
 }
 
-func writeZipFile(targetPath string, f *zip.File) error {
+func unzipFile(destDir string, f *zip.File) error {
+	// Check for ZipSlip
+	fileName := strings.ReplaceAll(f.Name, "..", "")
+
+	if fileName != f.Name {
+		return fmt.Errorf("invalid zip file: %s", f.Name)
+	}
+
+	targetPath := filepath.Join(destDir, fileName)
+
 	if f.FileInfo().IsDir() {
-		return os.MkdirAll(targetPath, os.ModePerm)
+		return os.MkdirAll(targetPath, f.Mode())
+	}
+
+	if err := os.MkdirAll(filepath.Dir(targetPath), os.ModePerm); err != nil {
+		return err
 	}
 
 	outFile, err := os.OpenFile(targetPath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
@@ -64,6 +66,73 @@ func writeZipFile(targetPath string, f *zip.File) error {
 
 	outFile.Close()
 	_ = rc.Close()
+
+	return err
+}
+
+// ZipDir compresses a directory into a zip archive file.
+func ZipDir(zipPath, dir string) error {
+	newZipFile, err := os.Create(zipPath)
+	if err != nil {
+		return err
+	}
+	defer newZipFile.Close()
+
+	zipWriter := zip.NewWriter(newZipFile)
+	defer zipWriter.Close()
+
+	baseDirLen := len(dir)
+	if dir[len(dir)-1] != '/' {
+		baseDirLen = len(filepath.Dir(dir))
+	}
+
+	return AddDirToZip(zipWriter, baseDirLen, dir)
+}
+
+// AddDirToZip add all files under the target directory into a zip file
+func AddDirToZip(writer *zip.Writer, baseDirLen int, dir string) error {
+	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
+		if dir == path || info.IsDir() {
+			return nil
+		}
+
+		return AddFileToZip(writer, path, path[baseDirLen:])
+	})
+}
+
+// AddFileToZip add a single file into a zip file
+func AddFileToZip(zipWriter *zip.Writer, filePath, pathInZip string) error {
+	fileToZip, err := os.Open(filePath)
+	if err != nil {
+		return err
+	}
+	defer fileToZip.Close()
+
+	// Get the file information
+	info, err := fileToZip.Stat()
+	if err != nil {
+		return err
+	}
+
+	header, err := zip.FileInfoHeader(info)
+	if err != nil {
+		return err
+	}
+
+	// Using FileInfoHeader() above only uses the basename of the file. If we want
+	// to preserve the folder structure we can overwrite this with the full path.
+	header.Name = pathInZip
+
+	// Change to deflate to gain better compression
+	// see http://golang.org/pkg/archive/zip/#pkg-constants
+	header.Method = zip.Deflate
+
+	writer, err := zipWriter.CreateHeader(header)
+	if err != nil {
+		return err
+	}
+
+	_, err = io.Copy(writer, fileToZip)
 
 	return err
 }
