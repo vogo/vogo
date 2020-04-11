@@ -123,9 +123,7 @@ func AddFileToZip(zipWriter *zip.Writer, filePath, pathInZip string) error {
 	// to preserve the folder structure we can overwrite this with the full path.
 	header.Name = pathInZip
 
-	// Change to deflate to gain better compression
-	// see http://golang.org/pkg/archive/zip/#pkg-constants
-	header.Method = zip.Deflate
+	header.Method = chooseCompressMethod(filepath.Ext(filePath))
 
 	writer, err := zipWriter.CreateHeader(header)
 	if err != nil {
@@ -135,4 +133,13 @@ func AddFileToZip(zipWriter *zip.Writer, filePath, pathInZip string) error {
 	_, err = io.Copy(writer, fileToZip)
 
 	return err
+}
+
+func chooseCompressMethod(ext string) uint16 {
+	switch ext {
+	case ".jar", ".z", ".gz", ".tar", ".zip":
+		return zip.Store
+	default:
+		return zip.Deflate
+	}
 }
