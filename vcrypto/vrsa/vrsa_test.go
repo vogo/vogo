@@ -1,4 +1,4 @@
-// Copyright 2019 The vogo Authors. All rights reserved.
+// Copyright 2019-2020 The vogo Authors. All rights reserved.
 
 package vrsa
 
