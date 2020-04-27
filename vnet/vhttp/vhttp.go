@@ -63,7 +63,7 @@ func DownloadFile(filePath, rawURL string, timeout time.Duration) error {
 	return vioutil.WriteDataToFile(filePath, resp.Body, timeout)
 }
 
-// RemoteIP http remote ip address
+// RemoteIP http remote ip address.
 func RemoteIP(req *http.Request) string {
 	remoteAddr := req.RemoteAddr
 	if ip := req.Header.Get(XRealIP); ip != "" {
@@ -81,7 +81,7 @@ func RemoteIP(req *http.Request) string {
 	return remoteAddr
 }
 
-// IP2long convert IPv4 to uint32
+// IP2long convert IPv4 to uint32.
 func IP2long(ipstr string) uint32 {
 	ip := net.ParseIP(ipstr)
 	if ip == nil {
@@ -93,7 +93,7 @@ func IP2long(ipstr string) uint32 {
 	return binary.BigEndian.Uint32(ip)
 }
 
-// Get url response
+// Get url response.
 func Get(rawURL string) ([]byte, error) {
 	u, err := url.Parse(rawURL)
 	if err != nil {
@@ -119,7 +119,7 @@ func Get(rawURL string) ([]byte, error) {
 	return body, err
 }
 
-// IsConnectionError is http connection error
+// IsConnectionError is http connection error.
 func IsConnectionError(err error) bool {
 	switch err {
 	case http.ErrServerClosed, net.ErrWriteToConnected:

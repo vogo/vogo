@@ -7,7 +7,7 @@ import (
 	"net/url"
 )
 
-// IsURLNetError whether net error for url request
+// IsURLNetError whether net error for url request.
 func IsURLNetError(err error) bool {
 	urlErr, ok := err.(*url.Error)
 	if !ok {

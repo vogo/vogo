@@ -1,6 +1,6 @@
 // Copyright 2019-2020 The vogo Authors. All rights reserved.
 
-package vbytes
+package vbytes_test
 
 import (
 	"fmt"
@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/vogo/vogo/vbytes"
 )
 
 type treader struct {
@@ -40,10 +41,10 @@ func TestTimeoutCopy(t *testing.T) {
 	r := &treader{readLimit: 5}
 	w := &twriter{}
 
-	err := TimeoutCopy(w, r, 3*time.Second)
-	assert.Equal(t, ErrTimeout, err)
+	err := vbytes.TimeoutCopy(w, r, 3*time.Second)
+	assert.Equal(t, vbytes.ErrTimeout, err)
 
 	r.readCount = 0
-	err = TimeoutCopy(w, r, 10*time.Second)
+	err = vbytes.TimeoutCopy(w, r, 10*time.Second)
 	assert.Nil(t, err)
 }

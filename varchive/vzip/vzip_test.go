@@ -1,6 +1,6 @@
 // Copyright 2019-2020 The vogo Authors. All rights reserved.
 
-package vzip
+package vzip_test
 
 import (
 	"io/ioutil"
@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/vogo/vogo/varchive/vzip"
 	"github.com/vogo/vogo/vio/vioutil"
 )
 
@@ -30,8 +31,8 @@ func TestZipDir(t *testing.T) {
 	t.Logf("zip path: %s", zipPath)
 	t.Logf("zip dir: %s", zipDir)
 
-	assert.NoError(t, ZipDir(zipPath, zipDir))
-	assert.NoError(t, Unzip(zipPath, outputDir))
+	assert.NoError(t, vzip.ZipDir(zipPath, zipDir))
+	assert.NoError(t, vzip.Unzip(zipPath, outputDir))
 	assert.True(t, vioutil.ExistFile(filepath.Join(outputDir, "a", "a1.txt")))
 	assert.True(t, vioutil.ExistFile(filepath.Join(outputDir, "a", "a2.txt")))
 	assert.True(t, vioutil.ExistFile(filepath.Join(outputDir, "a", "b", "b1.txt")))
@@ -46,8 +47,8 @@ func TestZipDir(t *testing.T) {
 	t.Logf("zip path: %s", zipPath)
 	t.Logf("zip dir: %s", zipDir)
 
-	assert.NoError(t, ZipDir(zipPath, zipDir))
-	assert.NoError(t, Unzip(zipPath, outputDir))
+	assert.NoError(t, vzip.ZipDir(zipPath, zipDir))
+	assert.NoError(t, vzip.Unzip(zipPath, outputDir))
 	assert.True(t, vioutil.ExistFile(filepath.Join(outputDir, "a1.txt")))
 	assert.True(t, vioutil.ExistFile(filepath.Join(outputDir, "a2.txt")))
 	assert.True(t, vioutil.ExistFile(filepath.Join(outputDir, "b", "b1.txt")))

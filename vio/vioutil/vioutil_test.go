@@ -1,6 +1,6 @@
 // Copyright 2019-2020 The vogo Authors. All rights reserved.
 
-package vioutil
+package vioutil_test
 
 import (
 	"bytes"
@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/vogo/vogo/vio/vioutil"
 )
 
 func TestLinkLatest(t *testing.T) {
@@ -20,8 +21,8 @@ func TestLinkLatest(t *testing.T) {
 
 	assert.Nil(t, ioutil.WriteFile(sourceFile, []byte("test"), 0666))
 
-	assert.Nil(t, LinkFile(sourceFile, linkFile))
-	assert.Nil(t, LinkFile(sourceFile, linkFile))
+	assert.Nil(t, vioutil.LinkFile(sourceFile, linkFile))
+	assert.Nil(t, vioutil.LinkFile(sourceFile, linkFile))
 
 	_ = os.Remove(linkFile)
 	_ = os.Remove(sourceFile)
@@ -31,8 +32,8 @@ func TestLinkLatest(t *testing.T) {
 
 	_ = os.Mkdir(sourceDir, 0777)
 
-	assert.Nil(t, LinkFile(sourceDir, linkDir))
-	assert.Nil(t, LinkFile(sourceDir, linkDir))
+	assert.Nil(t, vioutil.LinkFile(sourceDir, linkDir))
+	assert.Nil(t, vioutil.LinkFile(sourceDir, linkDir))
 
 	_ = os.Remove(sourceDir)
 	_ = os.Remove(linkDir)
@@ -85,7 +86,7 @@ echo $result
 
 	file.Close()
 
-	err = Dos2Unix(fileName)
+	err = vioutil.Dos2Unix(fileName)
 	if !assert.Nil(t, err) {
 		return
 	}

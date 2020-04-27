@@ -14,7 +14,7 @@ import (
 	"github.com/vogo/vogo/vbytes"
 )
 
-// ReadFile read file to string
+// ReadFile read file to string.
 func ReadFile(filePath string) string {
 	bytes, err := ioutil.ReadFile(filePath)
 	if err != nil {
@@ -24,6 +24,7 @@ func ReadFile(filePath string) string {
 	return string(bytes)
 }
 
+// IsDirEmpty whether the given dir is empty.
 func IsDirEmpty(dirPath string) bool {
 	files, _ := ioutil.ReadDir(dirPath)
 
@@ -77,7 +78,7 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 	return io.Copy(dst, src)
 }
 
-// ExistFile check file exists
+// ExistFile check file exists.
 func ExistFile(file string) bool {
 	if s, err := os.Stat(file); err == nil {
 		return !s.IsDir()
@@ -88,7 +89,7 @@ func ExistFile(file string) bool {
 	return false
 }
 
-// ExistDir check dir exists
+// ExistDir check dir exists.
 func ExistDir(file string) bool {
 	s, err := os.Stat(file)
 	if err != nil {
@@ -98,7 +99,7 @@ func ExistDir(file string) bool {
 	return s.IsDir()
 }
 
-// AppendFile append data to file
+// AppendFile append data to file.
 func AppendFile(filePath string, data []byte, perm os.FileMode) error {
 	if !ExistFile(filePath) {
 		return ioutil.WriteFile(filePath, data, perm)
@@ -119,27 +120,21 @@ func AppendFile(filePath string, data []byte, perm os.FileMode) error {
 	return err
 }
 
-// LinkFile link file
+// LinkFile link file.
 func LinkFile(sourceFilePath, targetFilePath string) error {
 	logger.Infof("create symbolic link %s to %s", sourceFilePath, targetFilePath)
 
 	// remove the exists link file before create
 	if stat, err := os.Stat(targetFilePath); err == nil && stat != nil {
-		if stat.IsDir() {
-			if err := os.RemoveAll(targetFilePath); err != nil {
-				logger.Warnf("remove %s: %v", targetFilePath, err)
-			}
-		} else {
-			if err := os.Remove(targetFilePath); err != nil {
-				logger.Warnf("remove %s: %v", targetFilePath, err)
-			}
+		if err := os.RemoveAll(targetFilePath); err != nil {
+			logger.Warnf("remove %s: %v", targetFilePath, err)
 		}
 	}
 
 	return os.Symlink(sourceFilePath, targetFilePath)
 }
 
-// ListFileNames list file names which match the given prefix and suffix
+// ListFileNames list file names which match the given prefix and suffix.
 func ListFileNames(dirPath, prefix, suffix string) ([]string, error) {
 	f, err := os.Open(dirPath)
 	if err != nil {
@@ -172,13 +167,13 @@ func ListFileNames(dirPath, prefix, suffix string) ([]string, error) {
 	return files, nil
 }
 
-// Move file
+// Move move a file from a path to another path.
 func Move(from, to string) error {
 	os.Remove(to)
 	return os.Rename(from, to)
 }
 
-// Dos2Unix change file format to unix
+// Dos2Unix change file format to unix.
 func Dos2Unix(fileName string) error {
 	var err error
 
@@ -209,7 +204,7 @@ func Dos2Unix(fileName string) error {
 }
 
 // WriteDataToFile read data and write to file in a give limit time
-// it will write to a temp file first, and then rename to the target file
+// it will write to a temp file first, and then rename to the target file.
 func WriteDataToFile(filePath string, data io.Reader, timeout time.Duration) error {
 	tempPath := filePath + ".tmp"
 

@@ -89,7 +89,7 @@ func ZipDir(zipPath, dir string) error {
 	return AddDirToZip(zipWriter, baseDirLen, dir)
 }
 
-// AddDirToZip add all files under the target directory into a zip file
+// AddDirToZip add all files under the target directory into a zip file.
 func AddDirToZip(writer *zip.Writer, baseDirLen int, dir string) error {
 	return filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if dir == path || info.IsDir() {
@@ -100,7 +100,7 @@ func AddDirToZip(writer *zip.Writer, baseDirLen int, dir string) error {
 	})
 }
 
-// AddFileToZip add a single file into a zip file
+// AddFileToZip add a single file into a zip file.
 func AddFileToZip(zipWriter *zip.Writer, filePath, pathInZip string) error {
 	fileToZip, err := os.Open(filePath)
 	if err != nil {

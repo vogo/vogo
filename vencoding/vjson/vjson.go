@@ -4,14 +4,14 @@ package vjson
 
 import "encoding/json"
 
-// EnsureUnmarshal unmarshal data and panic if has error
+// EnsureUnmarshal unmarshal data and panic if has error.
 func EnsureUnmarshal(data []byte, v interface{}) {
 	if err := json.Unmarshal(data, v); err != nil {
 		panic(err)
 	}
 }
 
-// EnsureMarshal marshal interface and panic if has error
+// EnsureMarshal marshal interface and panic if has error.
 func EnsureMarshal(v interface{}) []byte {
 	b, err := json.Marshal(v)
 	if err != nil {

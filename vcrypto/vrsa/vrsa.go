@@ -17,7 +17,7 @@ const (
 	rsaKeySize = 2048
 )
 
-func hash(data []byte) []byte {
+func Hash(data []byte) []byte {
 	s := sha1.Sum(data)
 	return s[:]
 }
@@ -118,11 +118,11 @@ func PublicEncrypt(key *rsa.PublicKey, data []byte) ([]byte, error) {
 }
 
 func PublicSign(key *rsa.PublicKey, data []byte) ([]byte, error) {
-	return PublicEncrypt(key, hash(data))
+	return PublicEncrypt(key, Hash(data))
 }
 
 func PublicVerify(key *rsa.PublicKey, sign, data []byte) error {
-	return rsa.VerifyPKCS1v15(key, crypto.SHA1, hash(data), sign)
+	return rsa.VerifyPKCS1v15(key, crypto.SHA1, Hash(data), sign)
 }
 
 func PrivateDecrypt(key *rsa.PrivateKey, data []byte) ([]byte, error) {
@@ -130,7 +130,7 @@ func PrivateDecrypt(key *rsa.PrivateKey, data []byte) ([]byte, error) {
 }
 
 func PrivateSign(key *rsa.PrivateKey, data []byte) ([]byte, error) {
-	return rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA1, hash(data))
+	return rsa.SignPKCS1v15(rand.Reader, key, crypto.SHA1, Hash(data))
 }
 
 func PrivateVerify(key *rsa.PrivateKey, sign, data []byte) error {
@@ -139,7 +139,7 @@ func PrivateVerify(key *rsa.PrivateKey, sign, data []byte) error {
 		return err
 	}
 
-	if !bytes.Equal(h, hash(data)) {
+	if !bytes.Equal(h, Hash(data)) {
 		return rsa.ErrVerification
 	}
 

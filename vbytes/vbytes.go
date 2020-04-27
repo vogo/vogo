@@ -48,7 +48,7 @@ func CopyFilterBytes(from io.Reader, target io.Writer, filter []byte) error {
 	return nil
 }
 
-// TimeoutCopy copy in a timeout duration
+// TimeoutCopy copy in a timeout duration.
 func TimeoutCopy(dst io.Writer, src io.Reader, timeout time.Duration) error {
 	buf := make([]byte, DefaultBufferSize)
 	timer := time.NewTimer(timeout)

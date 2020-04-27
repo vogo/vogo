@@ -29,7 +29,7 @@ var (
 	currentUserName string
 )
 
-// GetCurrentUserName get current user name
+// GetCurrentUserName get current user name.
 func GetCurrentUserName() string {
 	if currentUserName == "" {
 		u, err := user.Current()
@@ -50,7 +50,7 @@ func PidExist(pid int) bool {
 	return err == nil && p.Signal(syscall.Signal(0)) == nil
 }
 
-// Kill process
+// Kill process.
 func Kill(pid int) error {
 	logger.Infof("kill process %d", pid)
 	proc, err := os.FindProcess(pid)
@@ -99,12 +99,13 @@ func ExecContext(ctx context.Context, fullCommand string) ([]byte, error) {
 	return cmd.CombinedOutput()
 }
 
-// Shell execute shell without log
+// Shell execute shell without log.
 func Shell(fullCommand string) ([]byte, error) {
 	cmd := exec.Command("/bin/sh", "-c", fullCommand)
 	return cmd.CombinedOutput()
 }
 
+// SingleCommandResult exec command and return a single line result.
 func SingleCommandResult(fullCommand string) (string, error) {
 	output, err := ExecShell(fullCommand)
 	if err != nil {
@@ -122,8 +123,8 @@ var (
 	ErrPortNotFound = errors.New("port not found")
 )
 
-// GetPidByPort get process pid by port
-// command example: netstat -anp|grep '8888 ' |grep 'LISTEN'|awk '{printf $7}'|cut -d/ -f1
+// GetPidByPort get process pid by port.
+// command example: netstat -anp|grep '8888 ' |grep 'LISTEN'|awk '{printf $7}'|cut -d/ -f1 .
 func GetPidByPort(port int) (int, error) {
 	fullCommand := fmt.Sprintf("lsof -iTCP:%d -sTCP:LISTEN -n -P |grep LISTEN | awk '{print $2}'", port)
 	result, err := ExecShell(fullCommand)
@@ -193,7 +194,7 @@ func GetJavaHome(pid int) (string, error) {
 	return javaHome, nil
 }
 
-// ReadAllJavaProcessEnv
+// ReadAllJavaProcessEnv read all java process env.
 func ReadAllJavaProcessEnv() []map[string]string {
 	var processes []map[string]string
 

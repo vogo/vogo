@@ -13,7 +13,7 @@ import (
 	"github.com/vogo/vogo/vos"
 )
 
-// LocalPortExist check whether local port exist
+// LocalPortExist check whether local port exist.
 func LocalPortExist(port int) bool {
 	if port < 1 {
 		return false

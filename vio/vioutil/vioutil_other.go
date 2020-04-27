@@ -21,7 +21,7 @@ func UnLockFile(file *os.File) error {
 	return nil
 }
 
-// Touch create file if not exists
+// Touch create file if not exists.
 func Touch(fileName, userName string) error {
 	return errUnsupported
 }
