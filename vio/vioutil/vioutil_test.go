@@ -19,7 +19,7 @@ func TestLinkLatest(t *testing.T) {
 	sourceFile := filepath.Join(tempDir, "a.txt")
 	linkFile := filepath.Join(tempDir, "b.txt")
 
-	assert.Nil(t, ioutil.WriteFile(sourceFile, []byte("test"), 0666))
+	assert.Nil(t, ioutil.WriteFile(sourceFile, []byte("test"), 0600))
 
 	assert.Nil(t, vioutil.LinkFile(sourceFile, linkFile))
 	assert.Nil(t, vioutil.LinkFile(sourceFile, linkFile))
