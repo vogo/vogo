@@ -11,9 +11,16 @@ import (
 	"strings"
 )
 
+const DefaultZipLimitSize = 8 * 1024 * 1024
+
 // Unzip will decompress a zip archive, moving all files and folders
 // within the zip file (parameter 1) to an output directory (parameter 2).
 func Unzip(src, destDir string) error {
+	return LimitUnzip(src, destDir, DefaultZipLimitSize)
+}
+
+// LimitUnzip decompress a zip archive, while limit the size of a single containing file.
+func LimitUnzip(src, destDir string, limitSize int64) error {
 	r, err := zip.OpenReader(src)
 	if err != nil {
 		return err
@@ -26,7 +33,7 @@ func Unzip(src, destDir string) error {
 	}
 
 	for _, zipFile := range r.File {
-		if err := unzipFile(destDir, zipFile); err != nil {
+		if err := unzipFile(destDir, zipFile, limitSize); err != nil {
 			return err
 		}
 	}
@@ -34,12 +41,12 @@ func Unzip(src, destDir string) error {
 	return nil
 }
 
-func unzipFile(destDir string, f *zip.File) error {
+func unzipFile(destDir string, f *zip.File, limitSize int64) error {
 	// Check for ZipSlip
 	fileName := strings.ReplaceAll(f.Name, "..", "")
 
 	if fileName != f.Name {
-		return fmt.Errorf("invalid zip file: %s", f.Name)
+		return fmt.Errorf("%w: invalid zip file %s", os.ErrInvalid, f.Name)
 	}
 
 	targetPath := filepath.Join(destDir, fileName)
@@ -62,10 +69,15 @@ func unzipFile(destDir string, f *zip.File) error {
 		return err
 	}
 
-	_, err = io.Copy(outFile, rc)
+	_, err = io.CopyN(outFile, rc, limitSize)
 
 	outFile.Close()
 	_ = rc.Close()
+
+	// ignore EOF for copyN
+	if err == io.EOF {
+		return nil
+	}
 
 	return err
 }

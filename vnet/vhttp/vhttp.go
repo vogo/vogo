@@ -4,6 +4,7 @@ package vhttp
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net"
@@ -24,6 +25,8 @@ const (
 	DefaultTimeout = 120 * time.Second
 )
 
+var ErrHTTPFail = errors.New("http failed")
+
 // DownloadFile will download a url to a local file. It's efficient because it will
 // write as it downloads and not load the whole file into memory.
 func DownloadFile(filePath, rawURL string, timeout time.Duration) error {
@@ -42,7 +45,7 @@ func DownloadFile(filePath, rawURL string, timeout time.Duration) error {
 	switch resp.StatusCode {
 	case 200:
 	case 404:
-		return fmt.Errorf("file not found: %s", rawURL)
+		return fmt.Errorf("%w: download url %s", ErrHTTPFail, rawURL)
 	default:
 		buf := make([]byte, 1024)
 		result := ""
@@ -51,7 +54,7 @@ func DownloadFile(filePath, rawURL string, timeout time.Duration) error {
 			result = string(buf[:n])
 		}
 
-		return fmt.Errorf("download failed, status code: %d, result: %s", resp.StatusCode, result)
+		return fmt.Errorf("%w: [%d]%s", ErrHTTPFail, resp.StatusCode, result)
 	}
 
 	logger.Infof("download %s to %s", rawURL, filePath)
@@ -113,7 +116,7 @@ func Get(rawURL string) ([]byte, error) {
 	}
 
 	if resp.StatusCode != 200 {
-		err = fmt.Errorf("response status: %d", resp.StatusCode)
+		err = fmt.Errorf("%w: response status %d", ErrHTTPFail, resp.StatusCode)
 	}
 
 	return body, err

@@ -58,6 +58,9 @@ func GenerateKey64() (pri64, pub64 string, err error) {
 		nil
 }
 
+var ErrPrivateKeyInvalid = errors.New("private key invalid")
+var ErrPubKeyInvalid = errors.New("public key invalid")
+
 func PublicKeyFrom(key []byte) (*rsa.PublicKey, error) {
 	var (
 		pubInterface interface{}
@@ -74,7 +77,7 @@ func PublicKeyFrom(key []byte) (*rsa.PublicKey, error) {
 
 	pub, ok := pubInterface.(*rsa.PublicKey)
 	if !ok {
-		return nil, errors.New("invalid public key")
+		return nil, ErrPubKeyInvalid
 	}
 
 	return pub, nil
@@ -98,7 +101,7 @@ func PrivateKeyFrom(key []byte) (*rsa.PrivateKey, error) {
 	p, ok := pri.(*rsa.PrivateKey)
 
 	if !ok {
-		return nil, errors.New("invalid private key")
+		return nil, ErrPrivateKeyInvalid
 	}
 
 	return p, nil

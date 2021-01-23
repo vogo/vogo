@@ -13,6 +13,8 @@ import (
 	"github.com/vogo/vogo/vos"
 )
 
+var ErrNetworkNotConnected = errors.New("network not connected")
+
 // LocalPortExist check whether local port exist.
 func LocalPortExist(port int) bool {
 	if port < 1 {
@@ -70,7 +72,7 @@ func LocalIP() (string, error) {
 		return ipv4, nil
 	}
 
-	return "", errors.New("network not connected")
+	return "", ErrNetworkNotConnected
 }
 
 func getExternalIPv4(addrs []net.Addr) (string, bool) {

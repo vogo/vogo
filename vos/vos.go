@@ -121,6 +121,7 @@ func SingleCommandResult(fullCommand string) (string, error) {
 
 var (
 	ErrPortNotFound = errors.New("port not found")
+	ErrNoProcess    = errors.New("no process")
 )
 
 // GetPidByPort get process pid by port.
@@ -130,11 +131,11 @@ func GetPidByPort(port int) (int, error) {
 	result, err := ExecShell(fullCommand)
 
 	if err != nil {
-		return 0, fmt.Errorf("command error: %+v", err)
+		return 0, fmt.Errorf("command error: %w", err)
 	}
 
 	if result == nil {
-		return 0, fmt.Errorf("no process start at %d", port)
+		return 0, fmt.Errorf("%w: starting at %d", ErrNoProcess, port)
 	}
 
 	lines := bytes.Split(result, []byte{'\n'})
@@ -162,9 +163,11 @@ func GetProcessUser(pid int) (string, error) {
 	return SingleCommandResult(fullCommand)
 }
 
+var ErrJavaHomeNotFound = errors.New("can't find java home")
+
 func GetJavaHome(pid int) (string, error) {
 	if !PidExist(pid) {
-		return "", fmt.Errorf("no process for pid %d", pid)
+		return "", fmt.Errorf("%w: pid %d", os.ErrNotExist, pid)
 	}
 
 	fullCommand := fmt.Sprintf(`lsof -p %d \
@@ -181,11 +184,11 @@ func GetJavaHome(pid int) (string, error) {
 	}
 
 	if result == "" {
-		return "", errors.New("can't find java home")
+		return "", ErrJavaHomeNotFound
 	}
 
 	if !strings.HasSuffix(result, "/bin/java") {
-		return "", fmt.Errorf("can't get java home from path %s", result)
+		return "", fmt.Errorf("%w: path %s", ErrJavaHomeNotFound, result)
 	}
 
 	idx := strings.Index(result, "/bin/java")
