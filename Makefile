@@ -1,5 +1,11 @@
+.PHONY: build
+
 lint:
 	golangci-lint run
+
+license-check:
+	# go install github.com/vogo/license-header-checker/cmd/license-header-checker@latest
+	license-header-checker -v -a -r apache-license.txt . go
 
 format:
 		goimports -w -l .
@@ -8,4 +14,4 @@ format:
 test:
 		go test ./... -v
 
-all: format lint test
+build: license-check format lint test

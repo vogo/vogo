@@ -1,15 +1,36 @@
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 // Copyright 2019-2020 The vogo Authors. All rights reserved.
 
 package vhttp
 
 import (
+	"bytes"
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/vogo/vogo/vio/vioutil"
@@ -25,6 +46,16 @@ const (
 	DefaultTimeout = 120 * time.Second
 )
 
+const (
+	HeaderContentType = "content-type"
+	ContentTypeJson   = "application/json"
+)
+
+var jsonContentTypeHeader = map[string]string{
+	HeaderContentType: ContentTypeJson,
+}
+
+var ErrHTTPStatusNotOK = errors.New("http status not ok")
 var ErrHTTPFail = errors.New("http failed")
 
 // DownloadFile will download a url to a local file. It's efficient because it will
@@ -138,4 +169,62 @@ func IsConnectionError(err error) bool {
 
 		return false
 	}
+}
+
+func ParseGet(url string, headers map[string]string, obj interface{}) error {
+	return parseJsonResponse(http.MethodGet, url, headers, nil, obj)
+}
+
+func ParsePost(url string, headers map[string]string, body interface{}, obj interface{}) error {
+	var data io.Reader
+
+	if body != nil {
+		switch raw := body.(type) {
+		case []byte:
+			data = bytes.NewReader(raw)
+		case string:
+			data = strings.NewReader(raw)
+		default:
+			bytesData, jsonErr := json.Marshal(body)
+			if jsonErr != nil {
+				return jsonErr
+			}
+			data = bytes.NewReader(bytesData)
+		}
+	}
+
+	if headers == nil {
+		headers = jsonContentTypeHeader
+	} else {
+		headers[HeaderContentType] = ContentTypeJson
+	}
+
+	return parseJsonResponse(http.MethodPost, url, headers, data, obj)
+}
+
+func parseJsonResponse(method, url string, headers map[string]string, body io.Reader, obj interface{}) error {
+	req, _ := http.NewRequest(method, url, body)
+	if headers != nil {
+		for k, v := range headers {
+			req.Header.Set(k, v)
+		}
+	}
+
+	resp, err := (&http.Client{}).Do(req)
+	defer resp.Body.Close()
+
+	b, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("%v, status: %d, body: %s", ErrHTTPStatusNotOK, resp.StatusCode, b)
+	}
+
+	if err = json.Unmarshal(b, obj); err != nil {
+		return err
+	}
+
+	return nil
 }
