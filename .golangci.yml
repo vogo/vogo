@@ -32,6 +32,8 @@ linters:
     - prealloc
     - gochecknoglobals
     - gomnd
+    - wrapcheck
+    - varnamelen
 
 run:
   skip-dirs:

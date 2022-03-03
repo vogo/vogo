@@ -27,6 +27,8 @@ import (
 )
 
 func TestRoundFloat64(t *testing.T) {
+	t.Parallel()
+
 	assert.Equal(t, 12.23, vmath.RoundFloat64(12.2345678, 2))
 	assert.Equal(t, 12.235, vmath.RoundFloat64(12.2345678, 3))
 	assert.Equal(t, 12.2346, vmath.RoundFloat64(12.2345678, 4))

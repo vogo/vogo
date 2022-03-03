@@ -15,13 +15,27 @@
  * limitations under the License.
  */
 
-// Copyright 2019-2020 The vogo Authors. All rights reserved.
-
 package vrand
 
 import (
-	"math/rand"
+	"crypto/rand"
+	"math/big"
+	mathRand "math/rand"
 )
+
+func Intn64(n int64) int64 {
+	nBig, err := rand.Int(rand.Reader, big.NewInt(n))
+	if err != nil {
+		// nolint:gosec //ignore this
+		return mathRand.Int63n(n)
+	}
+
+	return nBig.Int64()
+}
+
+func Intn(n int) int {
+	return int(Intn64(int64(n)))
+}
 
 // RandomString return a random string with given length, and all characters are from the source string.
 func RandomString(src string, length int) string {
@@ -30,10 +44,10 @@ func RandomString(src string, length int) string {
 	buf := make([]byte, length)
 
 	for i := 0; i < length; i++ {
-		buf[i] = src[rand.Intn(srcLen)]
+		buf[i] = src[Intn(srcLen)]
 	}
 
-	rand.Shuffle(length, func(i, j int) {
+	mathRand.Shuffle(length, func(i, j int) {
 		buf[i], buf[j] = buf[j], buf[i]
 	})
 
@@ -42,6 +56,7 @@ func RandomString(src string, length int) string {
 
 // RandomSeedString return random string as function RandomString, but set seed first.
 func RandomSeedString(seed int64, src string, length int) string {
-	rand.Seed(seed)
+	mathRand.Seed(seed)
+
 	return RandomString(src, length)
 }

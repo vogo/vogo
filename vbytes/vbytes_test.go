@@ -20,8 +20,8 @@
 package vbytes_test
 
 import (
-	"fmt"
 	"io"
+	"log"
 	"testing"
 	"time"
 
@@ -40,22 +40,24 @@ func (r *treader) Read(buf []byte) (int, error) {
 		return 0, io.EOF
 	}
 
-	fmt.Println("read limit: ", r.readLimit, ", read count: ", r.readCount)
+	log.Println("read limit: ", r.readLimit, ", read count: ", r.readCount)
 	time.Sleep(time.Second)
 
 	return 1024, nil
 }
 
-type twriter struct {
-}
+type twriter struct{}
 
 func (w *twriter) Write(buf []byte) (int, error) {
-	fmt.Println("write ...")
+	log.Println("write ...")
+
 	return 1024, nil
 }
 
 func TestTimeoutCopy(t *testing.T) {
-	r := &treader{readLimit: 5}
+	t.Parallel()
+
+	r := &treader{readLimit: 5, readCount: 0}
 	w := &twriter{}
 
 	err := vbytes.TimeoutCopy(w, r, 3*time.Second)

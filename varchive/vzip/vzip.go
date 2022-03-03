@@ -21,6 +21,7 @@ package vzip
 
 import (
 	"archive/zip"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -92,7 +93,7 @@ func unzipFile(destDir string, f *zip.File, limitSize int64) error {
 	_ = rc.Close()
 
 	// ignore EOF for copyN
-	if err == io.EOF {
+	if errors.Is(err, io.EOF) {
 		return nil
 	}
 

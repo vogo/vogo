@@ -36,6 +36,7 @@ const (
 
 func Hash(data []byte) []byte {
 	s := sha1.Sum(data)
+
 	return s[:]
 }
 
@@ -67,7 +68,7 @@ func GenerateKeyBytes() (privateBytes, publicBytes []byte, err error) {
 func GenerateKey64() (pri64, pub64 string, err error) {
 	pri, pub, err := GenerateKeyBytes()
 	if err != nil {
-		return "", "", nil
+		return "", "", err
 	}
 
 	return base64.StdEncoding.EncodeToString(pri),
@@ -75,8 +76,10 @@ func GenerateKey64() (pri64, pub64 string, err error) {
 		nil
 }
 
-var ErrPrivateKeyInvalid = errors.New("private key invalid")
-var ErrPubKeyInvalid = errors.New("public key invalid")
+var (
+	ErrPrivateKeyInvalid = errors.New("private key invalid")
+	ErrPubKeyInvalid     = errors.New("public key invalid")
+)
 
 func PublicKeyFrom(key []byte) (*rsa.PublicKey, error) {
 	var (

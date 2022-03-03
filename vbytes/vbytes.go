@@ -30,10 +30,8 @@ const (
 	DefaultBufferSize = 32 * 1024
 )
 
-var (
-	// ErrTimeout is returned from timed out calls.
-	ErrTimeout = errors.New("timeout")
-)
+// ErrTimeout is returned from timed out calls.
+var ErrTimeout = errors.New("timeout")
 
 func CopyFilterBytes(from io.Reader, target io.Writer, filter []byte) error {
 	var (
@@ -48,7 +46,7 @@ func CopyFilterBytes(from io.Reader, target io.Writer, filter []byte) error {
 		index, err = from.Read(data)
 
 		if err != nil {
-			if err == io.EOF {
+			if errors.Is(err, io.EOF) {
 				break
 			}
 

@@ -23,7 +23,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/vogo/vogo/vmath/vrand"
+	"github.com/vogo/vogo/vrand"
 )
 
 const (

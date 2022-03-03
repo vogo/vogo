@@ -39,13 +39,13 @@ func LocalPortExist(port int) bool {
 	}
 
 	conn, err := net.DialTimeout("tcp", fmt.Sprintf(":%d", port), time.Second)
-
 	if err != nil {
 		return false
 	}
 
 	if conn != nil {
 		_ = conn.Close()
+
 		return true
 	}
 

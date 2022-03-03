@@ -26,6 +26,8 @@ import (
 )
 
 func TestByteReader_Read(t *testing.T) {
+	t.Parallel()
+
 	r := vio.NewBytesReader(
 		[]byte("hello world"),
 		[]byte("big world"),
@@ -71,6 +73,8 @@ func TestByteReader_Read(t *testing.T) {
 }
 
 func TestByteReader_ReadNil(t *testing.T) {
+	t.Parallel()
+
 	r := vio.NewBytesReader()
 	p := [10]byte{}
 	_, err := r.Read(p[:])

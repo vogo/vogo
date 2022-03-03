@@ -26,37 +26,55 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net"
 	"net/http"
 	"net/url"
 	"strings"
 	"time"
 
-	"github.com/vogo/vogo/vio/vioutil"
-
 	"github.com/vogo/logger"
+	"github.com/vogo/vogo/vio/vioutil"
 )
 
 const (
 	XForwardedFor = "X-Forwarded-For"
 	XRealIP       = "X-Real-IP"
 
-	// 2 min
-	DefaultTimeout = 120 * time.Second
+	// DefaultDownloadTimeout 2 min.
+	DefaultDownloadTimeout = 120 * time.Second
 )
 
 const (
 	HeaderContentType = "content-type"
-	ContentTypeJson   = "application/json"
+	ContentTypeJSON   = "application/json"
+
+	DefaultMaxIdleConns        = 32
+	DefaultMaxIdleConnsPerHost = 8
+	DefaultMaxConnsPerHost     = 64
+	DefaultIdleConnTimeout     = time.Second * 8
+
+	DefaultRequestTimeout = time.Second * 16
 )
 
 var jsonContentTypeHeader = map[string]string{
-	HeaderContentType: ContentTypeJson,
+	HeaderContentType: ContentTypeJSON,
 }
 
-var ErrHTTPStatusNotOK = errors.New("http status not ok")
-var ErrHTTPFail = errors.New("http failed")
+var (
+	ErrHTTPStatusNotOK = errors.New("http status not ok")
+	ErrHTTPFail        = errors.New("http failed")
+)
+
+// nolint:exhaustivestruct // ignore this
+var defaultHTTPClient = &http.Client{
+	Transport: &http.Transport{
+		MaxIdleConns:        DefaultMaxIdleConns,
+		MaxIdleConnsPerHost: DefaultMaxIdleConnsPerHost,
+		MaxConnsPerHost:     DefaultMaxConnsPerHost,
+		IdleConnTimeout:     DefaultIdleConnTimeout,
+	},
+	Timeout: DefaultRequestTimeout,
+}
 
 // DownloadFile will download a url to a local file. It's efficient because it will
 // write as it downloads and not load the whole file into memory.
@@ -66,7 +84,7 @@ func DownloadFile(filePath, rawURL string, timeout time.Duration) error {
 		return err
 	}
 
-	// Get the data
+	// nolint:noctx //ignore this
 	resp, err := http.Get(u.String())
 	if err != nil {
 		return err
@@ -91,7 +109,7 @@ func DownloadFile(filePath, rawURL string, timeout time.Duration) error {
 	logger.Infof("download %s to %s", rawURL, filePath)
 
 	if timeout == 0 {
-		timeout = DefaultTimeout
+		timeout = DefaultDownloadTimeout
 	}
 
 	return vioutil.WriteDataToFile(filePath, resp.Body, timeout)
@@ -134,14 +152,14 @@ func Get(rawURL string) ([]byte, error) {
 		return nil, err
 	}
 
+	// nolint:noctx //ignore this
 	resp, err := http.Get(u.String())
-
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
 
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -155,27 +173,29 @@ func Get(rawURL string) ([]byte, error) {
 
 // IsConnectionError is http connection error.
 func IsConnectionError(err error) bool {
-	switch err {
-	case http.ErrServerClosed, net.ErrWriteToConnected:
+	if errors.Is(err, http.ErrServerClosed) ||
+		errors.Is(err, net.ErrWriteToConnected) {
 		return true
-	default:
-		if _, ok := err.(*net.OpError); ok {
-			return true
-		}
-
-		if _, ok := err.(*url.Error); ok {
-			return true
-		}
-
-		return false
 	}
+
+	// nolint:errorlint // ignore this
+	if _, ok := err.(*net.OpError); ok {
+		return true
+	}
+
+	// nolint:errorlint // ignore this
+	if _, ok := err.(*url.Error); ok {
+		return true
+	}
+
+	return false
 }
 
-func ParseGet(url string, headers map[string]string, obj interface{}) error {
-	return parseJsonResponse(http.MethodGet, url, headers, nil, obj)
+func ParseGet(urlAddr string, headers map[string]string, obj interface{}) error {
+	return parseJSONResponse(http.MethodGet, urlAddr, headers, nil, obj)
 }
 
-func ParsePost(url string, headers map[string]string, body interface{}, obj interface{}) error {
+func ParsePost(urlAddr string, headers map[string]string, body, obj interface{}) error {
 	var data io.Reader
 
 	if body != nil {
@@ -189,6 +209,7 @@ func ParsePost(url string, headers map[string]string, body interface{}, obj inte
 			if jsonErr != nil {
 				return jsonErr
 			}
+
 			data = bytes.NewReader(bytesData)
 		}
 	}
@@ -196,21 +217,28 @@ func ParsePost(url string, headers map[string]string, body interface{}, obj inte
 	if headers == nil {
 		headers = jsonContentTypeHeader
 	} else {
-		headers[HeaderContentType] = ContentTypeJson
+		headers[HeaderContentType] = ContentTypeJSON
 	}
 
-	return parseJsonResponse(http.MethodPost, url, headers, data, obj)
+	return parseJSONResponse(http.MethodPost, urlAddr, headers, data, obj)
 }
 
-func parseJsonResponse(method, url string, headers map[string]string, body io.Reader, obj interface{}) error {
-	req, _ := http.NewRequest(method, url, body)
-	if headers != nil {
-		for k, v := range headers {
-			req.Header.Set(k, v)
-		}
+func parseJSONResponse(method, urlAddr string, headers map[string]string, body io.Reader, obj interface{}) error {
+	// nolint:noctx //ignore this
+	req, err := http.NewRequest(method, urlAddr, body)
+	if err != nil {
+		return err
 	}
 
-	resp, err := (&http.Client{}).Do(req)
+	for k, v := range headers {
+		req.Header.Set(k, v)
+	}
+
+	resp, err := defaultHTTPClient.Do(req)
+	if err != nil {
+		return err
+	}
+
 	defer resp.Body.Close()
 
 	b, err := io.ReadAll(resp.Body)
@@ -219,11 +247,11 @@ func parseJsonResponse(method, url string, headers map[string]string, body io.Re
 	}
 
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("%v, status: %d, body: %s", ErrHTTPStatusNotOK, resp.StatusCode, b)
+		return fmt.Errorf("%w, status: %d, body: %s", ErrHTTPStatusNotOK, resp.StatusCode, b)
 	}
 
-	if err = json.Unmarshal(b, obj); err != nil {
-		return err
+	if jsonErr := json.Unmarshal(b, obj); jsonErr != nil {
+		return jsonErr
 	}
 
 	return nil

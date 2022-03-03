@@ -24,7 +24,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"os/user"
@@ -42,9 +41,7 @@ const (
 	RootHome = "/root"
 )
 
-var (
-	currentUserName string
-)
+var currentUserName string
 
 // GetCurrentUserName get current user name.
 func GetCurrentUserName() string {
@@ -64,14 +61,15 @@ func GetCurrentUserName() string {
 // see: https://stackoverflow.com/questions/15204162/check-if-a-process-exists-in-go-way
 func PidExist(pid int) bool {
 	p, err := os.FindProcess(pid)
+
 	return err == nil && p.Signal(syscall.Signal(0)) == nil
 }
 
 // Kill process.
 func Kill(pid int) error {
 	logger.Infof("kill process %d", pid)
-	proc, err := os.FindProcess(pid)
 
+	proc, err := os.FindProcess(pid)
 	if err != nil {
 		return err
 	}
@@ -119,6 +117,7 @@ func ExecContext(ctx context.Context, fullCommand string) ([]byte, error) {
 // Shell execute shell without log.
 func Shell(fullCommand string) ([]byte, error) {
 	cmd := exec.Command("/bin/sh", "-c", fullCommand)
+
 	return cmd.CombinedOutput()
 }
 
@@ -145,8 +144,8 @@ var (
 // command example: netstat -anp|grep '8888 ' |grep 'LISTEN'|awk '{printf $7}'|cut -d/ -f1 .
 func GetPidByPort(port int) (int, error) {
 	fullCommand := fmt.Sprintf("lsof -iTCP:%d -sTCP:LISTEN -n -P |grep LISTEN | awk '{print $2}'", port)
-	result, err := ExecShell(fullCommand)
 
+	result, err := ExecShell(fullCommand)
 	if err != nil {
 		return 0, fmt.Errorf("command error: %w", err)
 	}
@@ -167,6 +166,7 @@ func GetPidByPort(port int) (int, error) {
 	p, err := strconv.Atoi(string(pid))
 	if err != nil {
 		logger.Warnf("can't find pid for port %d, result: %s", port, pid)
+
 		return -1, ErrPortNotFound
 	}
 
@@ -177,6 +177,7 @@ func GetPidByPort(port int) (int, error) {
 // example: ps -o ruser -p 16787 | tail -1
 func GetProcessUser(pid int) (string, error) {
 	fullCommand := fmt.Sprintf("ps -o ruser -p %d | tail -1", pid)
+
 	return SingleCommandResult(fullCommand)
 }
 
@@ -204,14 +205,12 @@ func GetJavaHome(pid int) (string, error) {
 		return "", ErrJavaHomeNotFound
 	}
 
-	if !strings.HasSuffix(result, "/bin/java") {
-		return "", fmt.Errorf("%w: path %s", ErrJavaHomeNotFound, result)
+	const javaBinSuffix = "/bin/java"
+	if strings.HasSuffix(result, javaBinSuffix) {
+		return result[:len(result)-len(javaBinSuffix)], nil
 	}
 
-	idx := strings.Index(result, "/bin/java")
-	javaHome := result[:idx]
-
-	return javaHome, nil
+	return "", fmt.Errorf("%w: path %s", ErrJavaHomeNotFound, result)
 }
 
 // ReadAllJavaProcessEnv read all java process env.
@@ -219,15 +218,13 @@ func ReadAllJavaProcessEnv() []map[string]string {
 	var processes []map[string]string
 
 	result, err := Shell("ps -o pid,cmd -e |grep java |grep -v grep")
-
 	if err != nil {
 		return nil
 	}
 
 	lines := bytes.Split(result, []byte{'\n'})
-	count := len(lines)
 
-	if count <= 0 {
+	if len(lines) == 0 {
 		return nil
 	}
 
@@ -265,8 +262,8 @@ func ReadAllJavaProcessEnv() []map[string]string {
 
 func ReadProcEnv(pid []byte) map[string]string {
 	env := make(map[string]string)
-	environData, err := ioutil.ReadFile(fmt.Sprintf("/proc/%s/environ", pid))
 
+	environData, err := os.ReadFile(fmt.Sprintf("/proc/%s/environ", pid))
 	if err != nil {
 		return env
 	}
@@ -283,9 +280,7 @@ func ReadProcEnv(pid []byte) map[string]string {
 	return env
 }
 
-var (
-	ignoreLoadEnvs = []string{"JAVA_OPTS", "CLASSPATH"}
-)
+var ignoreLoadEnvs = []string{"JAVA_OPTS", "CLASSPATH"}
 
 func isLoadIgnoreEnv(e string) bool {
 	for _, env := range ignoreLoadEnvs {
@@ -349,6 +344,7 @@ func loadEnvFromProfile(profile string) {
 	result, err := cmd.CombinedOutput()
 	if err != nil {
 		logger.Debugf("load env error: %v", err)
+
 		return
 	}
 
@@ -372,8 +368,8 @@ func loadEnvFromProfile(profile string) {
 		}
 
 		logger.Debugf("set env: %s", line)
-		err := os.Setenv(key, string(line[index+1:]))
 
+		err := os.Setenv(key, string(line[index+1:]))
 		if err != nil {
 			logger.Errorf("failed to set env: %v", err)
 		}

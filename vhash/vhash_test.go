@@ -22,18 +22,19 @@ package vhash_test
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"fmt"
 	"testing"
 
 	"github.com/vogo/vogo/vhash"
 )
 
 func TestMd5(t *testing.T) {
+	t.Parallel()
+
 	b := make([]byte, 100)
 	_, _ = rand.Reader.Read(b)
 	s := base64.StdEncoding.EncodeToString(b)
 	m := vhash.Md5(s)
-	fmt.Println(m)
+	t.Log(m)
 }
 
 func BenchmarkMd5(b *testing.B) {

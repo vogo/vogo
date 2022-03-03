@@ -21,7 +21,6 @@ package vioutil_test
 
 import (
 	"bytes"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -31,12 +30,14 @@ import (
 )
 
 func TestLinkLatest(t *testing.T) {
+	t.Parallel()
+
 	tempDir := os.TempDir()
 
 	sourceFile := filepath.Join(tempDir, "a.txt")
 	linkFile := filepath.Join(tempDir, "b.txt")
 
-	assert.Nil(t, ioutil.WriteFile(sourceFile, []byte("test"), 0600))
+	assert.Nil(t, os.WriteFile(sourceFile, []byte("test"), 0o600))
 
 	assert.Nil(t, vioutil.LinkFile(sourceFile, linkFile))
 	assert.Nil(t, vioutil.LinkFile(sourceFile, linkFile))
@@ -47,7 +48,7 @@ func TestLinkLatest(t *testing.T) {
 	sourceDir := filepath.Join(tempDir, "d1")
 	linkDir := filepath.Join(tempDir, "d2")
 
-	_ = os.Mkdir(sourceDir, 0777)
+	_ = os.Mkdir(sourceDir, 0o777)
 
 	assert.Nil(t, vioutil.LinkFile(sourceDir, linkDir))
 	assert.Nil(t, vioutil.LinkFile(sourceDir, linkDir))
@@ -57,6 +58,8 @@ func TestLinkLatest(t *testing.T) {
 }
 
 func TestDos2Unix(t *testing.T) {
+	t.Parallel()
+
 	fileName := filepath.Join(os.TempDir(), "unit_test_dos2unix.sh")
 	_ = os.Remove(fileName)
 
@@ -93,7 +96,6 @@ echo $PID > "$PID_FILE"
 echo $result
 
 `
-
 	fileData := bytes.ReplaceAll([]byte(shellData), []byte{'\n'}, []byte{'\r', '\n'})
 
 	_, err = file.Write(fileData)
@@ -108,7 +110,7 @@ echo $result
 		return
 	}
 
-	b, err := ioutil.ReadFile(fileName)
+	b, err := os.ReadFile(fileName)
 	if !assert.Nil(t, err) {
 		return
 	}

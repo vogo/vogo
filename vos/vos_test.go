@@ -28,6 +28,8 @@ import (
 )
 
 func TestGetProcessUser(t *testing.T) {
+	t.Parallel()
+
 	u, err := vos.GetProcessUser(os.Getpid())
 	assert.Nil(t, err)
 	t.Logf("user: %s", u)

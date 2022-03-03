@@ -27,9 +27,7 @@ import (
 	"os"
 )
 
-var (
-	errUnsupported = errors.New("unsupported")
-)
+var errUnsupported = errors.New("unsupported")
 
 func LockFile(file *os.File) error {
 	return nil

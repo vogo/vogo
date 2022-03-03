@@ -22,7 +22,7 @@ package vrsa_test
 import (
 	"bytes"
 	"encoding/base64"
-	"fmt"
+	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -30,6 +30,8 @@ import (
 )
 
 func TestGenerateAndParse(t *testing.T) {
+	t.Parallel()
+
 	pri64, pub64, err := vrsa.GenerateKey64()
 	if err != nil {
 		t.Log(err)
@@ -44,6 +46,8 @@ func TestGenerateAndParse(t *testing.T) {
 }
 
 func TestHash(t *testing.T) {
+	t.Parallel()
+
 	b := vrsa.Hash([]byte("test"))
 	assert.Equal(t, 20, len(b))
 
@@ -55,6 +59,8 @@ func TestHash(t *testing.T) {
 }
 
 func TestRsa(t *testing.T) {
+	t.Parallel()
+
 	pri, pub, err := vrsa.GenerateKey()
 	assert.Nil(t, err)
 
@@ -74,14 +80,14 @@ func TestRsa(t *testing.T) {
 	// ---------------sign/verify--------------------------
 	pubSign, err := vrsa.PublicSign(pub, b)
 	assert.Nil(t, err)
-	fmt.Println("public sign:", base64.StdEncoding.EncodeToString(pubSign))
+	log.Println("public sign:", base64.StdEncoding.EncodeToString(pubSign))
 
 	err = vrsa.PrivateVerify(pri, pubSign, b)
 	assert.Nil(t, err)
 
 	priSign, err := vrsa.PrivateSign(pri, b)
 	assert.Nil(t, err)
-	fmt.Println("private sign:", base64.StdEncoding.EncodeToString(priSign))
+	log.Println("private sign:", base64.StdEncoding.EncodeToString(priSign))
 
 	err = vrsa.PublicVerify(pub, priSign, b)
 	assert.Nil(t, err)

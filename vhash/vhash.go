@@ -42,6 +42,7 @@ func Md5(data ...string) string {
 // Sha1 calculate sha1 for given bytes.
 func Sha1(data []byte) []byte {
 	s := sha1.Sum(data)
+
 	return s[:]
 }
 

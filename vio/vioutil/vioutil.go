@@ -22,8 +22,8 @@ package vioutil
 import (
 	"bufio"
 	"io"
-	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -33,7 +33,7 @@ import (
 
 // ReadFile read file to string.
 func ReadFile(filePath string) string {
-	bytes, err := ioutil.ReadFile(filePath)
+	bytes, err := os.ReadFile(filePath)
 	if err != nil {
 		logger.Info(err.Error())
 	}
@@ -43,11 +43,11 @@ func ReadFile(filePath string) string {
 
 // IsDirEmpty whether the given dir is empty.
 func IsDirEmpty(dirPath string) bool {
-	files, _ := ioutil.ReadDir(dirPath)
+	files, _ := os.ReadDir(dirPath)
 
 	for _, fi := range files {
 		if fi.IsDir() {
-			jars, _ := ioutil.ReadDir(dirPath + string(os.PathSeparator) + fi.Name())
+			jars, _ := os.ReadDir(filepath.Join(dirPath, fi.Name()))
 			if len(jars) > 0 {
 				return false
 			}
@@ -79,14 +79,15 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 	src, err := os.Open(srcName)
 	if err != nil {
 		logger.Infof("open src file fail, err: " + err.Error())
+
 		return
 	}
 	defer src.Close()
 
-	dst, err := os.OpenFile(dstName, os.O_WRONLY|os.O_CREATE, 0644)
-
+	dst, err := os.OpenFile(dstName, os.O_WRONLY|os.O_CREATE, 0o644)
 	if err != nil {
 		logger.Infof("open dst file fail, err: " + err.Error())
+
 		return
 	}
 	defer dst.Close()
@@ -119,7 +120,7 @@ func ExistDir(file string) bool {
 // AppendFile append data to file.
 func AppendFile(filePath string, data []byte, perm os.FileMode) error {
 	if !ExistFile(filePath) {
-		return ioutil.WriteFile(filePath, data, perm)
+		return os.WriteFile(filePath, data, perm)
 	}
 
 	// the following append file data
@@ -187,6 +188,7 @@ func ListFileNames(dirPath, prefix, suffix string) ([]string, error) {
 // Move move a file from a path to another path.
 func Move(from, to string) error {
 	os.Remove(to)
+
 	return os.Rename(from, to)
 }
 
@@ -201,12 +203,14 @@ func Dos2Unix(fileName string) error {
 	defer file.Close()
 
 	tmpFileName := fileName + ".tmp"
-	wFile, err := os.Create(tmpFileName)
 
+	wFile, err := os.Create(tmpFileName)
 	if err != nil {
 		return err
 	}
+
 	defer wFile.Close()
+
 	w := bufio.NewWriter(wFile)
 
 	if err := vbytes.CopyFilterBytes(file, wFile, []byte{'\r'}); err != nil {
@@ -229,6 +233,7 @@ func WriteDataToFile(filePath string, data io.Reader, timeout time.Duration) err
 	out, err := os.Create(tempPath)
 	if err != nil {
 		logger.Infof("can't create file: %v", err)
+
 		return err
 	}
 
@@ -241,6 +246,7 @@ func WriteDataToFile(filePath string, data io.Reader, timeout time.Duration) err
 	// delete temp file if download error occurs
 	if err != nil {
 		_ = os.Remove(tempPath)
+
 		return err
 	}
 

@@ -20,7 +20,6 @@
 package vzip_test
 
 import (
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"testing"
@@ -31,15 +30,17 @@ import (
 )
 
 func TestZipDir(t *testing.T) {
+	t.Parallel()
+
 	workDir := filepath.Join(os.TempDir(), "test_zip_dir")
 	defer os.RemoveAll(workDir)
 
 	assert.NoError(t, os.MkdirAll(filepath.Join(workDir, "a", "b"), os.ModePerm))
 
-	assert.NoError(t, ioutil.WriteFile(filepath.Join(workDir, "a", "a1.txt"), []byte("aaa1"), 0600))
-	assert.NoError(t, ioutil.WriteFile(filepath.Join(workDir, "a", "a2.txt"), []byte("aaa2"), 0600))
-	assert.NoError(t, ioutil.WriteFile(filepath.Join(workDir, "a", "b", "b1.txt"), []byte("bbb1"), 0600))
-	assert.NoError(t, ioutil.WriteFile(filepath.Join(workDir, "a", "b", "b2.txt"), []byte("bbb2"), 0600))
+	assert.NoError(t, os.WriteFile(filepath.Join(workDir, "a", "a1.txt"), []byte("aaa1"), 0o600))
+	assert.NoError(t, os.WriteFile(filepath.Join(workDir, "a", "a2.txt"), []byte("aaa2"), 0o600))
+	assert.NoError(t, os.WriteFile(filepath.Join(workDir, "a", "b", "b1.txt"), []byte("bbb1"), 0o600))
+	assert.NoError(t, os.WriteFile(filepath.Join(workDir, "a", "b", "b2.txt"), []byte("bbb2"), 0o600))
 
 	zipPath := filepath.Join(workDir, "test.zip")
 	zipDir := filepath.Join(workDir, "a")

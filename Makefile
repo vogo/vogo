@@ -10,6 +10,7 @@ license-check:
 format:
 		goimports -w -l .
 		go fmt ./...
+		gofumpt -w .
 
 test:
 		go test ./... -v
