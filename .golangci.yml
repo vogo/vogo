@@ -34,6 +34,9 @@ linters:
     - gomnd
     - wrapcheck
     - varnamelen
+    - exhaustruct
+    - nonamedreturns
+    - goerr113
 
 run:
   skip-dirs:

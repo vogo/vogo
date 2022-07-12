@@ -84,7 +84,6 @@ func DownloadFile(filePath, rawURL string, timeout time.Duration) error {
 		return err
 	}
 
-	// nolint:noctx //ignore this
 	resp, err := http.Get(u.String())
 	if err != nil {
 		return err
@@ -152,7 +151,6 @@ func Get(rawURL string) ([]byte, error) {
 		return nil, err
 	}
 
-	// nolint:noctx //ignore this
 	resp, err := http.Get(u.String())
 	if err != nil {
 		return nil, err
@@ -224,7 +222,6 @@ func ParsePost(urlAddr string, headers map[string]string, body, obj interface{})
 }
 
 func parseJSONResponse(method, urlAddr string, headers map[string]string, body io.Reader, obj interface{}) error {
-	// nolint:noctx //ignore this
 	req, err := http.NewRequest(method, urlAddr, body)
 	if err != nil {
 		return err
