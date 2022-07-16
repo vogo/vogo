@@ -21,7 +21,10 @@ package vurl
 
 import (
 	"net"
+	"net/http"
 	"net/url"
+
+	"github.com/vogo/logger"
 )
 
 // IsURLNetError whether net error for url request.
@@ -36,4 +39,31 @@ func IsURLNetError(err error) bool {
 	_, ok = urlErr.Err.(*net.OpError)
 
 	return ok
+}
+
+// nolint:exhaustivestruct // ignore this.
+var nonRedirectHTTPClient = &http.Client{
+	CheckRedirect: func(req *http.Request, via []*http.Request) error {
+		return http.ErrUseLastResponse
+	},
+}
+
+// RedirectURL redirect url.
+func RedirectURL(urlAddr string) string {
+	for {
+		resp, err := nonRedirectHTTPClient.Get(urlAddr)
+		if err != nil {
+			logger.Debugf("redirect url error: %v", err)
+
+			return urlAddr
+		}
+
+		_ = resp.Body.Close()
+
+		if resp.StatusCode != http.StatusFound {
+			return urlAddr
+		}
+
+		urlAddr = resp.Header.Get("Location")
+	}
 }
