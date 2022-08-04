@@ -24,11 +24,45 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/vogo/logger"
 )
+
+func EnsureEnvString(key string) string {
+	v, ok := os.LookupEnv(key)
+	if !ok {
+		panic("env not found: " + key)
+	}
+
+	return v
+}
+
+func EnvString(key string) string {
+	v, _ := os.LookupEnv(key)
+
+	return v
+}
+
+func EnsureEnvInt(key string) int {
+	v, ok := os.LookupEnv(key)
+	if !ok {
+		panic("env not found: " + key)
+	}
+
+	intValue, err := strconv.Atoi(v)
+	if err != nil {
+		panic(fmt.Sprintf("invalid config %s: %s", key, v))
+	}
+
+	return intValue
+}
+
+func EnsureEnvInt64(key string) int64 {
+	return int64(EnsureEnvInt(key))
+}
 
 var ignoreLoadEnvs = []string{"JAVA_OPTS", "CLASSPATH"}
 
