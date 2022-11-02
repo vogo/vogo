@@ -57,6 +57,7 @@ func TestLinkLatest(t *testing.T) {
 	_ = os.Remove(linkDir)
 }
 
+//nolint:dupword // ignore this.
 func TestDos2Unix(t *testing.T) {
 	t.Parallel()
 

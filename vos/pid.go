@@ -92,7 +92,7 @@ func GetPidByPort(port int) (int, error) {
 	return p, nil
 }
 
-// GetProcessUser the the user of process by pid
+// GetProcessUser the user of process by pid
 // example: ps -o ruser -p 16787 | tail -1
 func GetProcessUser(pid int) (string, error) {
 	fullCommand := fmt.Sprintf("ps -o ruser -p %d | tail -1", pid)

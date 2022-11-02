@@ -37,6 +37,8 @@ linters:
     - exhaustruct
     - nonamedreturns
     - goerr113
+    - nosnakecase
+    - noctx
 
 run:
   skip-dirs:

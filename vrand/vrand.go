@@ -24,9 +24,9 @@ import (
 )
 
 func Intn64(n int64) int64 {
+	//nolint:gosec // ignore gosec G404: Use of weak random number generator (math/rand instead of crypto/rand).
 	nBig, err := rand.Int(rand.Reader, big.NewInt(n))
 	if err != nil {
-		// nolint:gosec //ignore this
 		return mathRand.Int63n(n)
 	}
 

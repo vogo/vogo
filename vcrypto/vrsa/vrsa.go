@@ -41,7 +41,11 @@ func Hash(data []byte) []byte {
 }
 
 func GenerateKey() (*rsa.PrivateKey, *rsa.PublicKey, error) {
-	pri, err := rsa.GenerateKey(rand.Reader, rsaKeySize)
+	return GenerateSizedKey(rsaKeySize)
+}
+
+func GenerateSizedKey(size int) (*rsa.PrivateKey, *rsa.PublicKey, error) {
+	pri, err := rsa.GenerateKey(rand.Reader, size)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -50,7 +54,11 @@ func GenerateKey() (*rsa.PrivateKey, *rsa.PublicKey, error) {
 }
 
 func GenerateKeyBytes() (privateBytes, publicBytes []byte, err error) {
-	pri, pub, err := GenerateKey()
+	return GenerateSizedKeyBytes(rsaKeySize)
+}
+
+func GenerateSizedKeyBytes(size int) (privateBytes, publicBytes []byte, err error) {
+	pri, pub, err := GenerateSizedKey(size)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -66,7 +74,11 @@ func GenerateKeyBytes() (privateBytes, publicBytes []byte, err error) {
 }
 
 func GenerateKey64() (pri64, pub64 string, err error) {
-	pri, pub, err := GenerateKeyBytes()
+	return GenerateSizedKey64(rsaKeySize)
+}
+
+func GenerateSizedKey64(size int) (pri64, pub64 string, err error) {
+	pri, pub, err := GenerateSizedKeyBytes(size)
 	if err != nil {
 		return "", "", err
 	}

@@ -65,7 +65,7 @@ var (
 	ErrHTTPFail        = errors.New("http failed")
 )
 
-// nolint:exhaustivestruct // ignore this
+//nolint:exhaustivestruct // ignore this
 var defaultHTTPClient = &http.Client{
 	Transport: &http.Transport{
 		MaxIdleConns:        DefaultMaxIdleConns,
@@ -91,8 +91,8 @@ func DownloadFile(filePath, rawURL string, timeout time.Duration) error {
 	defer resp.Body.Close()
 
 	switch resp.StatusCode {
-	case 200:
-	case 404:
+	case http.StatusOK:
+	case http.StatusNotFound:
 		return fmt.Errorf("%w: download url %s", ErrHTTPFail, rawURL)
 	default:
 		buf := make([]byte, 1024)
@@ -162,7 +162,7 @@ func Get(rawURL string) ([]byte, error) {
 		return nil, err
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		err = fmt.Errorf("%w: response status %d", ErrHTTPFail, resp.StatusCode)
 	}
 
@@ -176,12 +176,12 @@ func IsConnectionError(err error) bool {
 		return true
 	}
 
-	// nolint:errorlint // ignore this
+	//nolint:errorlint // ignore this
 	if _, ok := err.(*net.OpError); ok {
 		return true
 	}
 
-	// nolint:errorlint // ignore this
+	//nolint:errorlint // ignore this
 	if _, ok := err.(*url.Error); ok {
 		return true
 	}

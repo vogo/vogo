@@ -29,19 +29,19 @@ import (
 
 // IsURLNetError whether net error for url request.
 func IsURLNetError(err error) bool {
-	// nolint:errorlint // ignore this
+	//nolint:errorlint // ignore this
 	urlErr, ok := err.(*url.Error)
 	if !ok {
 		return false
 	}
 
-	// nolint:errorlint // ignore this
+	//nolint:errorlint // ignore this
 	_, ok = urlErr.Err.(*net.OpError)
 
 	return ok
 }
 
-// nolint:exhaustivestruct // ignore this.
+//nolint:exhaustivestruct // ignore this.
 var nonRedirectHTTPClient = &http.Client{
 	CheckRedirect: func(req *http.Request, via []*http.Request) error {
 		return http.ErrUseLastResponse
