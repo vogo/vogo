@@ -44,3 +44,47 @@ func ContainsAny(s string, test ...string) bool {
 
 	return false
 }
+
+// AfterFirst returns the substring after the first occurrence of sep in s.
+// It returns s if sep is not present in s.
+func AfterFirst(s string, sep string) string {
+	index := strings.Index(s, sep)
+	if index < 0 {
+		return s
+	}
+
+	return s[index+len(sep):]
+}
+
+// AfterLast returns the substring after the last occurrence of sep in s.
+// It returns s if sep is not present in s.
+func AfterLast(s string, sep string) string {
+	index := strings.LastIndex(s, sep)
+	if index < 0 {
+		return s
+	}
+
+	return s[index+1:]
+}
+
+// BeforeFirst returns the substring before the first occurrence of sep in s.
+// It returns s if sep is not present in s.
+func BeforeFirst(s string, sep string) string {
+	index := strings.Index(s, sep)
+	if index < 0 {
+		return s
+	}
+
+	return s[:index]
+}
+
+// BeforeLast returns the substring before the last occurrence of sep in s.
+// It returns s if sep is not present in s.
+func BeforeLast(s string, sep string) string {
+	index := strings.LastIndex(s, sep)
+	if index < 0 {
+		return s
+	}
+
+	return s[:index]
+}
