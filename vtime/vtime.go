@@ -26,10 +26,12 @@ const (
 )
 
 var (
+	// ZeroTime is the zero time.
 	ZeroTime     = time.Unix(0, 0)
 	TimeLocation = time.Local
 )
 
+// SetLocation sets the time location.
 func SetLocation(local string) error {
 	l, err := time.LoadLocation(local)
 	if err != nil {
@@ -41,18 +43,24 @@ func SetLocation(local string) error {
 	return nil
 }
 
+// Parse parses a string to time.
 func Parse(str string) (time.Time, error) {
 	return time.ParseInLocation(DateTimeLayout, str, TimeLocation)
 }
 
+// Milliseconds returns the current time in milliseconds.
 func Milliseconds() int64 {
-	return ToMilliseconds(time.Now())
+	return time.Now().UnixMilli()
 }
 
+// ToMilliseconds converts a time to milliseconds.
+// Deprecated: use time.Time.UnixMilli() instead.
 func ToMilliseconds(t time.Time) int64 {
-	return t.UnixNano() / 1000000
+	return t.UnixMilli()
 }
 
+// FromMilliseconds converts milliseconds to time.
+// Deprecated: use time.UnixMilli(m) instead.
 func FromMilliseconds(m int64) time.Time {
-	return time.Unix(m/1000, m%1000*1000000)
+	return time.UnixMilli(m)
 }

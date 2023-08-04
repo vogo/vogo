@@ -21,6 +21,7 @@ package vstrings
 
 import "strings"
 
+// ContainsIn checks if a string is in a string slice.
 func ContainsIn(items []string, item string) bool {
 	if len(items) == 0 {
 		return false
@@ -35,6 +36,7 @@ func ContainsIn(items []string, item string) bool {
 	return false
 }
 
+// ContainsAny checks if a string contains any of the test strings.
 func ContainsAny(s string, test ...string) bool {
 	for _, t := range test {
 		if strings.Contains(s, t) {
@@ -47,7 +49,7 @@ func ContainsAny(s string, test ...string) bool {
 
 // AfterFirst returns the substring after the first occurrence of sep in s.
 // It returns s if sep is not present in s.
-func AfterFirst(s string, sep string) string {
+func AfterFirst(s, sep string) string {
 	index := strings.Index(s, sep)
 	if index < 0 {
 		return s
@@ -58,7 +60,7 @@ func AfterFirst(s string, sep string) string {
 
 // AfterLast returns the substring after the last occurrence of sep in s.
 // It returns s if sep is not present in s.
-func AfterLast(s string, sep string) string {
+func AfterLast(s, sep string) string {
 	index := strings.LastIndex(s, sep)
 	if index < 0 {
 		return s
@@ -69,7 +71,7 @@ func AfterLast(s string, sep string) string {
 
 // BeforeFirst returns the substring before the first occurrence of sep in s.
 // It returns s if sep is not present in s.
-func BeforeFirst(s string, sep string) string {
+func BeforeFirst(s, sep string) string {
 	index := strings.Index(s, sep)
 	if index < 0 {
 		return s
@@ -80,7 +82,7 @@ func BeforeFirst(s string, sep string) string {
 
 // BeforeLast returns the substring before the last occurrence of sep in s.
 // It returns s if sep is not present in s.
-func BeforeLast(s string, sep string) string {
+func BeforeLast(s, sep string) string {
 	index := strings.LastIndex(s, sep)
 	if index < 0 {
 		return s

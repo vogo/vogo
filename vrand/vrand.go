@@ -23,8 +23,8 @@ import (
 	mathRand "math/rand"
 )
 
+// Intn64 returns a non-negative pseudo-random int64 in [0,n).
 func Intn64(n int64) int64 {
-	//nolint:gosec // ignore gosec G404: Use of weak random number generator (math/rand instead of crypto/rand).
 	nBig, err := rand.Int(rand.Reader, big.NewInt(n))
 	if err != nil {
 		return mathRand.Int63n(n)
@@ -33,6 +33,7 @@ func Intn64(n int64) int64 {
 	return nBig.Int64()
 }
 
+// Intn returns a non-negative pseudo-random int in [0,n).
 func Intn(n int) int {
 	return int(Intn64(int64(n)))
 }
@@ -55,8 +56,7 @@ func RandomString(src string, length int) string {
 }
 
 // RandomSeedString return random string as function RandomString, but set seed first.
+// Deprecated: use RandomString instead.
 func RandomSeedString(seed int64, src string, length int) string {
-	mathRand.Seed(seed)
-
 	return RandomString(src, length)
 }

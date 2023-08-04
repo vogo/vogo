@@ -19,6 +19,7 @@
 
 package vsync
 
+// IsChanClosed checks if a channel is closed.
 func IsChanClosed(c chan struct{}) bool {
 	if c == nil {
 		return true
@@ -31,6 +32,7 @@ func IsChanClosed(c chan struct{}) bool {
 	}
 }
 
+// SafeClosed closes a channel safely.
 func SafeClosed(c chan struct{}) {
 	if !IsChanClosed(c) {
 		defer func() {
