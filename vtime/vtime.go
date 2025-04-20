@@ -64,3 +64,30 @@ func ToMilliseconds(t time.Time) int64 {
 func FromMilliseconds(m int64) time.Time {
 	return time.UnixMilli(m)
 }
+
+const (
+	// DateHourMinuteLayout is the layout for service time
+	DateHourMinuteLayout = "2006-01-02 15:04"
+	DateLayout           = "2006-01-02"
+	HourMinuteLayout     = "15:04"
+)
+
+func ParseDateHourMinute(t string) (time.Time, error) {
+	if len(t) == len(DateHourMinuteLayout)+3 {
+		t = t[:len(DateHourMinuteLayout)]
+	}
+
+	return time.Parse(DateHourMinuteLayout, t)
+}
+
+func FormatDateHourMinute(t time.Time) string {
+	return t.Format(DateHourMinuteLayout)
+}
+
+func FormatHourMinute(t time.Time) string {
+	return t.Format(HourMinuteLayout)
+}
+
+func FormatDate(t time.Time) string {
+	return t.Format(DateLayout)
+}
