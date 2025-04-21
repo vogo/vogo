@@ -95,7 +95,7 @@ var (
 
 func PublicKeyFrom(key []byte) (*rsa.PublicKey, error) {
 	var (
-		pubInterface interface{}
+		pubInterface any
 		err          error
 	)
 

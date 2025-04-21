@@ -22,14 +22,14 @@ package vjson
 import "encoding/json"
 
 // EnsureUnmarshal unmarshal data and panic if has error.
-func EnsureUnmarshal(data []byte, v interface{}) {
+func EnsureUnmarshal(data []byte, v any) {
 	if err := json.Unmarshal(data, v); err != nil {
 		panic(err)
 	}
 }
 
 // EnsureMarshal marshal interface and panic if has error.
-func EnsureMarshal(v interface{}) []byte {
+func EnsureMarshal(v any) []byte {
 	b, err := json.Marshal(v)
 	if err != nil {
 		panic(err)

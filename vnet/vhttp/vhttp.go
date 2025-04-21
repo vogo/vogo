@@ -189,11 +189,11 @@ func IsConnectionError(err error) bool {
 	return false
 }
 
-func ParseGet(urlAddr string, headers map[string]string, obj interface{}) error {
+func ParseGet(urlAddr string, headers map[string]string, obj any) error {
 	return parseJSONResponse(http.MethodGet, urlAddr, headers, nil, obj)
 }
 
-func ParsePost(urlAddr string, headers map[string]string, body, obj interface{}) error {
+func ParsePost(urlAddr string, headers map[string]string, body, obj any) error {
 	var data io.Reader
 
 	if body != nil {
@@ -221,7 +221,7 @@ func ParsePost(urlAddr string, headers map[string]string, body, obj interface{})
 	return parseJSONResponse(http.MethodPost, urlAddr, headers, data, obj)
 }
 
-func parseJSONResponse(method, urlAddr string, headers map[string]string, body io.Reader, obj interface{}) error {
+func parseJSONResponse(method, urlAddr string, headers map[string]string, body io.Reader, obj any) error {
 	req, err := http.NewRequest(method, urlAddr, body)
 	if err != nil {
 		return err

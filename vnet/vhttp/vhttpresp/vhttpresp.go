@@ -26,16 +26,16 @@ import (
 )
 
 type ResponseBody struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg,omitempty"`
-	Data interface{} `json:"data,omitempty"`
+	Code int    `json:"code"`
+	Msg  string `json:"msg,omitempty"`
+	Data any    `json:"data,omitempty"`
 }
 
-func Data(w http.ResponseWriter, req *http.Request, code int, data interface{}) {
+func Data(w http.ResponseWriter, req *http.Request, code int, data any) {
 	Write(w, req, code, "", data)
 }
 
-func CodeData(w http.ResponseWriter, req *http.Request, code int, msg string, data interface{}) {
+func CodeData(w http.ResponseWriter, req *http.Request, code int, msg string, data any) {
 	Write(w, req, code, msg, data)
 }
 
@@ -43,7 +43,7 @@ func OK(w http.ResponseWriter, req *http.Request) {
 	Write(w, req, vhttperror.CodeOK, "", "ok")
 }
 
-func Success(w http.ResponseWriter, req *http.Request, data interface{}) {
+func Success(w http.ResponseWriter, req *http.Request, data any) {
 	Write(w, req, vhttperror.CodeOK, "", data)
 }
 
@@ -77,7 +77,7 @@ func CodeMsg(w http.ResponseWriter, req *http.Request, code int, msg string) {
 	Write(w, req, code, msg, nil)
 }
 
-func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data interface{}) {
+func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data any) {
 	resp := ResponseBody{
 		Code: code,
 		Msg:  msg,
