@@ -23,14 +23,13 @@
 package vioutil
 
 import (
+	"log"
 	"os"
 	"os/user"
 	"strconv"
 	"syscall"
 
 	"github.com/vogo/vogo/vos"
-
-	"github.com/vogo/logger"
 )
 
 func LockFile(file *os.File) error {
@@ -46,7 +45,7 @@ func Touch(fileName, userName string) error {
 	if !ExistFile(fileName) {
 		f, err := os.Create(fileName)
 		if err != nil {
-			logger.Infof("failed to create file %s, error: %v", fileName, err)
+			log.Printf("failed to create file %s, error: %v", fileName, err)
 			return err
 		}
 
@@ -55,7 +54,7 @@ func Touch(fileName, userName string) error {
 		if userName != "" && userName != vos.CurrUserHome() {
 			u, err := user.Lookup(userName)
 			if err != nil {
-				logger.Infof("failed to change file owner %s, error: %v", fileName, err)
+				log.Printf("failed to change file owner %s, error: %v", fileName, err)
 				return err
 			}
 			uid, _ := strconv.Atoi(u.Uid)

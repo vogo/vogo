@@ -32,7 +32,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/vogo/logger"
 	"github.com/vogo/vogo/vio/vioutil"
 )
 
@@ -104,8 +103,6 @@ func DownloadFile(filePath, rawURL string, timeout time.Duration) error {
 
 		return fmt.Errorf("%w: [%d]%s", ErrHTTPFail, resp.StatusCode, result)
 	}
-
-	logger.Infof("download %s to %s", rawURL, filePath)
 
 	if timeout == 0 {
 		timeout = DefaultDownloadTimeout

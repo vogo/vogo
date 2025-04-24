@@ -24,15 +24,14 @@ package vnet
 
 import (
 	"bytes"
+	"log"
 	"os"
-
-	"github.com/vogo/logger"
 )
 
 func GetRouteInterfaces() (routeFaces []string) {
 	data, err := os.ReadFile("/proc/net/route")
 	if err != nil {
-		logger.Infof("failed to read /proc/net/route, error: %+v", err)
+		log.Printf("failed to read /proc/net/route, error: %+v", err)
 		return
 	}
 	return parseRouteInterfaces(data)

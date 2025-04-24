@@ -21,19 +21,15 @@ import (
 	"context"
 	"os/exec"
 	"strings"
-
-	"github.com/vogo/logger"
 )
 
 func ExecShell(fullCommand string) ([]byte, error) {
-	logger.Debugf("exec: %s", fullCommand)
 	cmd := exec.Command("/bin/sh", "-c", fullCommand)
 
 	return cmd.CombinedOutput()
 }
 
 func ExecContext(ctx context.Context, fullCommand string) ([]byte, error) {
-	logger.Debugf("exec: %s", fullCommand)
 	cmd := exec.CommandContext(ctx, "/bin/sh", "-c", fullCommand)
 
 	return cmd.CombinedOutput()

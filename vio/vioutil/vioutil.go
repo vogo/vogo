@@ -22,12 +22,12 @@ package vioutil
 import (
 	"bufio"
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
-	"github.com/vogo/logger"
 	"github.com/vogo/vogo/vbytes"
 )
 
@@ -35,7 +35,7 @@ import (
 func ReadFile(filePath string) string {
 	bytes, err := os.ReadFile(filePath)
 	if err != nil {
-		logger.Info(err.Error())
+		log.Print(err.Error())
 	}
 
 	return string(bytes)
@@ -78,7 +78,7 @@ func IsFile(path string) bool {
 func CopyFile(dstName, srcName string) (written int64, err error) {
 	src, err := os.Open(srcName)
 	if err != nil {
-		logger.Infof("open src file fail, err: " + err.Error())
+		log.Printf("open src file fail, err: " + err.Error())
 
 		return
 	}
@@ -86,12 +86,12 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 
 	dst, err := os.OpenFile(dstName, os.O_WRONLY|os.O_CREATE, 0o644)
 	if err != nil {
-		logger.Infof("open dst file fail, err: " + err.Error())
+		log.Printf("open dst file fail, err: " + err.Error())
 
 		return
 	}
 	defer dst.Close()
-	logger.Infof("copy file success, dst: %s, src: %s", dst.Name(), src.Name())
+	log.Printf("copy file success, dst: %s, src: %s", dst.Name(), src.Name())
 
 	return io.Copy(dst, src)
 }
@@ -140,12 +140,12 @@ func AppendFile(filePath string, data []byte, perm os.FileMode) error {
 
 // LinkFile link file.
 func LinkFile(sourceFilePath, targetFilePath string) error {
-	logger.Infof("create symbolic link %s to %s", sourceFilePath, targetFilePath)
+	log.Printf("create symbolic link %s to %s", sourceFilePath, targetFilePath)
 
 	// remove the exists link file before create
 	if stat, err := os.Stat(targetFilePath); err == nil && stat != nil {
 		if err := os.RemoveAll(targetFilePath); err != nil {
-			logger.Warnf("remove %s: %v", targetFilePath, err)
+			log.Printf("remove %s: %v", targetFilePath, err)
 		}
 	}
 
@@ -232,7 +232,7 @@ func WriteDataToFile(filePath string, data io.Reader, timeout time.Duration) err
 	// Create temp file
 	out, err := os.Create(tempPath)
 	if err != nil {
-		logger.Infof("can't create file: %v", err)
+		log.Printf("can't create file: %v", err)
 
 		return err
 	}

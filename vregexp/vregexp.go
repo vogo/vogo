@@ -50,7 +50,6 @@ func RegexGroupRender(renderExpression string) func([][]byte) []byte {
 
 			var groupIndex int
 			groupIndex, err = strconv.Atoi(renderExpression[i+1 : j])
-
 			if err != nil {
 				panic(fmt.Errorf("vregexp: invalid group index: %s", renderExpression[i+1:j]))
 			}

@@ -44,7 +44,6 @@ func CopyFilterBytes(from io.Reader, target io.Writer, filter []byte) error {
 	for {
 		data = data[:cap(data)]
 		index, err = from.Read(data)
-
 		if err != nil {
 			if errors.Is(err, io.EOF) {
 				break

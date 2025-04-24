@@ -21,14 +21,13 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/vogo/logger"
 )
 
 func EnsureEnvString(key string) string {
@@ -102,7 +101,7 @@ func addEnvPathBin(bin string) {
 	path := os.Getenv("PATH")
 	if !EnvPathContains(path, bin) {
 		if err := os.Setenv("PATH", path+EnvValueSplit+bin); err != nil {
-			logger.Warnf("set env error: %v", err)
+			log.Printf("set env error: %v", err)
 		}
 	}
 }
@@ -114,8 +113,6 @@ func EnvPathContains(path, bin string) bool {
 }
 
 func loadEnvFromProfile(profile string) {
-	logger.Infof("load env from %s", profile)
-
 	commandStr := fmt.Sprintf("source %s && env", profile)
 	ctx, cancel := context.WithCancel(context.Background())
 	cmd := exec.CommandContext(ctx, "/bin/sh", "-c", commandStr)
@@ -127,7 +124,7 @@ func loadEnvFromProfile(profile string) {
 
 	result, err := cmd.CombinedOutput()
 	if err != nil {
-		logger.Debugf("load env error: %v", err)
+		log.Printf("load env error: %v", err)
 
 		return
 	}
@@ -151,11 +148,9 @@ func loadEnvFromProfile(profile string) {
 			continue
 		}
 
-		logger.Debugf("set env: %s", line)
-
-		err := os.Setenv(key, string(line[index+1:]))
+		err = os.Setenv(key, string(line[index+1:]))
 		if err != nil {
-			logger.Errorf("failed to set env: %v", err)
+			log.Printf("failed to set env: %v", err)
 		}
 	}
 }

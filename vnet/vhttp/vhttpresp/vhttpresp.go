@@ -19,10 +19,10 @@ package vhttpresp
 
 import (
 	"encoding/json"
-	"github.com/vogo/vogo/vnet/vhttp/vhttperror"
+	"log"
 	"net/http"
 
-	"github.com/vogo/logger"
+	"github.com/vogo/vogo/vnet/vhttp/vhttperror"
 )
 
 type ResponseBody struct {
@@ -86,7 +86,7 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 
 	jsonBytes, err := json.Marshal(resp)
 	if err != nil {
-		logger.Infof("json marshal error: %+v", err)
+		log.Printf("http respons json marshal error: %+v", err)
 
 		_, _ = w.Write([]byte("internal server error"))
 
