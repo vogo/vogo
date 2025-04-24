@@ -27,6 +27,7 @@ import (
 	"strings"
 	"syscall"
 
+	"github.com/vogo/vogo/vos/vexec"
 	"github.com/vogo/vogo/vstrings"
 )
 
@@ -64,7 +65,7 @@ func Kill(pid int) error {
 func GetPidByPort(port int) (int, error) {
 	fullCommand := fmt.Sprintf("lsof -iTCP:%d -sTCP:LISTEN -n -P |grep LISTEN | awk '{print $2}'", port)
 
-	result, err := ExecShell(fullCommand)
+	result, err := vexec.ExecShell(fullCommand)
 	if err != nil {
 		return 0, fmt.Errorf("command error: %w", err)
 	}
@@ -95,7 +96,7 @@ func GetPidByPort(port int) (int, error) {
 func GetProcessUser(pid int) (string, error) {
 	fullCommand := fmt.Sprintf("ps -o ruser -p %d | tail -1", pid)
 
-	return SingleCommandResult(fullCommand)
+	return vexec.SingleCommandResult(fullCommand)
 }
 
 func ReadProcEnv(pid []byte) map[string]string {

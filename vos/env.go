@@ -28,6 +28,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/vogo/vogo/vos/vuser"
 )
 
 func EnsureEnvString(key string) string {
@@ -76,7 +78,7 @@ func isLoadIgnoreEnv(e string) bool {
 }
 
 func LoadUserEnv() {
-	profiles := getUserEnvProfiles()
+	profiles := vuser.GetUserEnvProfiles()
 	for _, profile := range profiles {
 		if _, err := os.Stat(profile); err != nil {
 			continue
@@ -100,16 +102,16 @@ func adjustPathEnv() {
 func addEnvPathBin(bin string) {
 	path := os.Getenv("PATH")
 	if !EnvPathContains(path, bin) {
-		if err := os.Setenv("PATH", path+EnvValueSplit+bin); err != nil {
+		if err := os.Setenv("PATH", path+vuser.EnvValueSplit+bin); err != nil {
 			log.Printf("set env error: %v", err)
 		}
 	}
 }
 
 func EnvPathContains(path, bin string) bool {
-	return strings.HasPrefix(path, bin+EnvValueSplit) ||
-		strings.Contains(path, EnvValueSplit+bin+EnvValueSplit) ||
-		strings.HasSuffix(path, EnvValueSplit+bin)
+	return strings.HasPrefix(path, bin+vuser.EnvValueSplit) ||
+		strings.Contains(path, vuser.EnvValueSplit+bin+vuser.EnvValueSplit) ||
+		strings.HasSuffix(path, vuser.EnvValueSplit+bin)
 }
 
 func loadEnvFromProfile(profile string) {

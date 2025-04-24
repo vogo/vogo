@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package vos
+package vexec
 
 import (
 	"context"

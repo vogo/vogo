@@ -27,7 +27,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/vogo/vogo/vos"
+	"github.com/vogo/vogo/vos/vexec"
 )
 
 var ErrNetworkNotConnected = errors.New("network not connected")
@@ -119,7 +119,7 @@ func getExternalIPv4(addrs []net.Addr) (string, bool) {
 }
 
 func ConnectionCount() (established, listen, closeWait int, err error) {
-	result, err := vos.Shell(
+	result, err := vexec.Shell(
 		`netstat -ant | awk '/ESTABLISHED|LISTEN|CLOSE_WAIT/ {count[$6]++} END { for(s in count) {  printf("%s:%d\n", s, count[s]); }}'`)
 	if err != nil {
 		return

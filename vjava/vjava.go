@@ -24,6 +24,8 @@ import (
 	"os"
 	"strings"
 
+	"github.com/vogo/vogo/vos/vexec"
+
 	"github.com/vogo/vogo/vos"
 )
 
@@ -42,7 +44,7 @@ func GetJavaHome(pid int) (string, error) {
 |xargs ls -l \
 |awk '{if($1~/^l/){print $11}else{print $9}}'`, pid)
 
-	result, err := vos.SingleCommandResult(fullCommand)
+	result, err := vexec.SingleCommandResult(fullCommand)
 	if err != nil {
 		return "", err
 	}
@@ -63,7 +65,7 @@ func GetJavaHome(pid int) (string, error) {
 func ReadAllJavaProcessEnv() []map[string]string {
 	var processes []map[string]string
 
-	result, err := vos.Shell("ps -o pid,cmd -e |grep java |grep -v grep")
+	result, err := vexec.Shell("ps -o pid,cmd -e |grep java |grep -v grep")
 	if err != nil {
 		return nil
 	}

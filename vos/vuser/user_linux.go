@@ -17,16 +17,26 @@
 
 // Copyright 2019-2020 The vogo Authors. All rights reserved.
 
-package vos
+package vuser
+
+import "fmt"
 
 const (
 	EnvValueSplit = ":"
 )
 
-// getUserEnvProfiles mac can't get user env from user file .bash_profile.
 func getUserEnvProfiles() []string {
-	return []string{
+	userName := GetCurrentUserName()
+
+	files := []string{
 		"/etc/bashrc",
 		"/etc/profile",
 	}
+
+	if userName == "root" {
+		return append(files, "/root/.bashrc", "/root/.bash_profile")
+	}
+
+	return append(files, fmt.Sprintf("/home/%s/.bashrc", userName),
+		fmt.Sprintf("/home/%s/.bash_profile", userName))
 }

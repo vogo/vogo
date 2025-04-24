@@ -15,14 +15,45 @@
  * limitations under the License.
  */
 
-// Copyright 2019-2020 The vogo Authors. All rights reserved.
+package vuser
 
-package vos
+import "os/user"
 
 const (
-	EnvValueSplit = ";"
+	RootHome = "/root"
 )
 
-func getUserEnvProfiles() []string {
-	return []string{}
+var currentUserName string
+
+// GetCurrentUserName get current user name.
+func GetCurrentUserName() string {
+	if currentUserName == "" {
+		u, err := user.Current()
+		if err != nil {
+			panic(err)
+		}
+
+		currentUserName = u.Username
+	}
+
+	return currentUserName
+}
+
+// CurrUserHome return user home.
+func CurrUserHome() string {
+	u, err := user.Current()
+	if err == nil {
+		return u.HomeDir
+	}
+
+	return RootHome
+}
+
+func GetUserHome(userName string) string {
+	u, err := user.Lookup(userName)
+	if err == nil {
+		return u.HomeDir
+	}
+
+	return RootHome
 }

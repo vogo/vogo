@@ -29,7 +29,7 @@ import (
 	"strconv"
 	"syscall"
 
-	"github.com/vogo/vogo/vos"
+	"github.com/vogo/vogo/vos/vuser"
 )
 
 func LockFile(file *os.File) error {
@@ -51,7 +51,7 @@ func Touch(fileName, userName string) error {
 
 		defer f.Close()
 
-		if userName != "" && userName != vos.CurrUserHome() {
+		if userName != "" && userName != vuser.CurrUserHome() {
 			u, err := user.Lookup(userName)
 			if err != nil {
 				log.Printf("failed to change file owner %s, error: %v", fileName, err)
