@@ -25,7 +25,7 @@ const (
 	EnvValueSplit = ":"
 )
 
-func getUserEnvProfiles() []string {
+func GetUserEnvProfiles() []string {
 	userName := GetCurrentUserName()
 
 	files := []string{

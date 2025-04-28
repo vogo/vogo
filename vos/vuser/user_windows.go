@@ -23,6 +23,6 @@ const (
 	EnvValueSplit = ";"
 )
 
-func getUserEnvProfiles() []string {
+func GetUserEnvProfiles() []string {
 	return []string{}
 }
