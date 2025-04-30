@@ -64,3 +64,59 @@ func EnsureUint64(s string) uint64 {
 	}
 	return i
 }
+
+func Int(s string) int {
+	if s == "" {
+		return 0
+	}
+	return EnsureInt(s)
+}
+
+func Int64(s string) int64 {
+	if s == "" {
+		return 0
+	}
+	return EnsureInt64(s)
+}
+
+func Int32(s string) int32 {
+	if s == "" {
+		return 0
+	}
+	return EnsureInt32(s)
+}
+
+func Uint(s string) uint {
+	if s == "" {
+		return 0
+	}
+	return EnsureUint(s)
+}
+
+func Bool(s string) bool {
+	if s == "" {
+		return false
+	}
+	return EnsureBool(s)
+}
+
+func Float64(s string) float64 {
+	if s == "" {
+		return 0
+	}
+	return EnsureFloat64(s)
+}
+
+func Float32(s string) float32 {
+	if s == "" {
+		return 0
+	}
+	return EnsureFloat32(s)
+}
+
+func Uint64(s string) uint64 {
+	if s == "" {
+		return 0
+	}
+	return EnsureUint64(s)
+}
