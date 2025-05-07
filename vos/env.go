@@ -61,8 +61,21 @@ func EnsureEnvInt(key string) int {
 	return intValue
 }
 
+func EnvInt(key string) int {
+	v, _ := os.LookupEnv(key)
+	intValue, err := strconv.Atoi(v)
+	if err != nil {
+		return 0
+	}
+	return intValue
+}
+
 func EnsureEnvInt64(key string) int64 {
 	return int64(EnsureEnvInt(key))
+}
+
+func EnvInt64(key string) int64 {
+	return int64(EnvInt(key))
 }
 
 var ignoreLoadEnvs = []string{"JAVA_OPTS", "CLASSPATH"}
