@@ -19,7 +19,10 @@
 
 package vjson
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"io"
+)
 
 // EnsureUnmarshal unmarshal data and panic if has error.
 func EnsureUnmarshal(data []byte, v any) {
@@ -36,4 +39,14 @@ func EnsureMarshal(v any) []byte {
 	}
 
 	return b
+}
+
+// UnmarshalStream unmarshal stream data.
+func UnmarshalStream(r io.Reader, v any) error {
+	return json.NewDecoder(r).Decode(v)
+}
+
+// MarshalStream marshal interface to stream.
+func MarshalStream(w io.Writer, v any) error {
+	return json.NewEncoder(w).Encode(v)
 }
