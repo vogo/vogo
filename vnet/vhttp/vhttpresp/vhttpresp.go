@@ -40,7 +40,11 @@ func CodeData(w http.ResponseWriter, req *http.Request, code int, msg string, da
 }
 
 func OK(w http.ResponseWriter, req *http.Request) {
-	Write(w, req, vhttperror.CodeOK, "", "ok")
+	Write(w, req, vhttperror.CodeOK, "ok", nil)
+}
+
+func OKMsg(w http.ResponseWriter, req *http.Request, msg string) {
+	Write(w, req, vhttperror.CodeOK, msg, nil)
 }
 
 func Success(w http.ResponseWriter, req *http.Request, data any) {
@@ -84,15 +88,11 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 		Data: data,
 	}
 
-	jsonBytes, err := json.Marshal(resp)
-	if err != nil {
-		log.Printf("http respons json marshal error: %+v", err)
-
-		_, _ = w.Write([]byte("internal server error"))
-
-		return
-	}
-
 	w.Header().Set("Content-Type", "application/json")
-	_, _ = w.Write(jsonBytes)
+	err := json.NewEncoder(w).Encode(resp)
+	if err != nil {
+		log.Printf("http respons json marshal error: %+v, data: %v", err, resp)
+
+		_, _ = w.Write([]byte(`{"code":10,"msg":"internal error"}`))
+	}
 }
