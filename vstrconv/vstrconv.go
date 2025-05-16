@@ -137,3 +137,11 @@ func Uint64(s string) uint64 {
 	}
 	return EnsureUint64(s)
 }
+
+func I64toa(i int64) string {
+	return strconv.FormatInt(i, 10)
+}
+
+func I32toa(i int32) string {
+	return strconv.FormatInt(int64(i), 10)
+}
