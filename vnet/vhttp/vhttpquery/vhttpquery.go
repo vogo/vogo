@@ -48,6 +48,18 @@ func Int(r *http.Request, name string) (int, bool) {
 	return i, true
 }
 
+func Int64(r *http.Request, name string) (int64, bool) {
+	param, ok := String(r, name)
+	if !ok {
+		return 0, false
+	}
+	i, err := strconv.ParseInt(param, 10, 64)
+	if err != nil {
+		return 0, false
+	}
+	return i, true
+}
+
 func Float(r *http.Request, name string) (float64, bool) {
 	param, ok := String(r, name)
 	if !ok {
