@@ -88,7 +88,7 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 		Data: data,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	err := json.NewEncoder(w).Encode(resp)
 	if err != nil {
 		log.Printf("http respons json marshal error: %+v, data: %v", err, resp)
