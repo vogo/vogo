@@ -19,9 +19,9 @@ package vhttpresp
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
+	"github.com/vogo/vogo/vlog"
 	"github.com/vogo/vogo/vnet/vhttp/vhttperror"
 )
 
@@ -87,12 +87,21 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 		Msg:  msg,
 		Data: data,
 	}
-
-	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-	err := json.NewEncoder(w).Encode(resp)
+	b, err := json.Marshal(resp)
 	if err != nil {
-		log.Printf("http respons json marshal error: %+v, data: %v", err, resp)
+		vlog.Errorf("http respons json marshal error: %+v, data: %v", err, resp)
 
 		_, _ = w.Write([]byte(`{"code":10,"msg":"internal error"}`))
+		return
+	}
+
+	if code == vhttperror.CodeOK {
+		vlog.Errorf("http response: %s", b)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	_, err = w.Write(b)
+	if err != nil {
+		vlog.Errorf("http respons write error: %+v, data: %v", err, resp)
 	}
 }
