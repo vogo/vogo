@@ -95,8 +95,8 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 		return
 	}
 
-	if code == vhttperror.CodeOK {
-		vlog.Errorf("http response: %s", b)
+	if code != vhttperror.CodeOK {
+		vlog.Errorf("http response error: %s", b)
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
