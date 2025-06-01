@@ -80,6 +80,16 @@ func BeforeFirst(s, sep string) string {
 	return s[:index]
 }
 
+// BeforeFirstInclude returns the substring before the first occurrence of sep in s, include sep.
+// It returns s if sep is not present in s.
+func BeforeFirstInclude(s, sep string) string {
+	index := strings.Index(s, sep)
+	if index < 0 {
+		return s
+	}
+	return s[:index+len(sep)]
+}
+
 // BeforeLast returns the substring before the last occurrence of sep in s.
 // It returns s if sep is not present in s.
 func BeforeLast(s, sep string) string {
@@ -89,4 +99,14 @@ func BeforeLast(s, sep string) string {
 	}
 
 	return s[:index]
+}
+
+// BeforeLastInclude returns the substring before the last occurrence of sep in s, include sep.
+// It returns s if sep is not present in s.
+func BeforeLastInclude(s, sep string) string {
+	index := strings.LastIndex(s, sep)
+	if index < 0 {
+		return s
+	}
+	return s[:index+len(sep)]
 }
