@@ -1,8 +1,8 @@
-vrunner - run/stop goroutines/tasks securely, recursively.
+vrun - run/stop goroutines/tasks securely, recursively.
 
 
 ```go
-s1 := vrunner.New()
+s1 := vrun.New()
 
 s1.Defer(func() {
     fmt.Println("s1 stopped 2")
