@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package vrunner_test
+package vrun_test
 
 import (
 	"sync/atomic"
@@ -23,7 +23,7 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/vogo/vogo/vsync/vrunner"
+	"github.com/vogo/vogo/vsync/vrun"
 )
 
 const goroutineScheduleInterval = time.Millisecond * 10
@@ -31,7 +31,7 @@ const goroutineScheduleInterval = time.Millisecond * 10
 func TestRunnerStop(t *testing.T) {
 	t.Parallel()
 
-	s1 := vrunner.New()
+	s1 := vrun.New()
 
 	s1.Defer(func() {
 		t.Log("s1 stopped 2")
@@ -88,7 +88,7 @@ func TestRunnerStop(t *testing.T) {
 func TestRunner(t *testing.T) {
 	t.Parallel()
 
-	s := vrunner.New()
+	s := vrun.New()
 
 	var (
 		status1 int64
@@ -117,18 +117,18 @@ func TestRunner(t *testing.T) {
 func TestNewChild(t *testing.T) {
 	t.Parallel()
 
-	s := vrunner.New()
+	s := vrun.New()
 	doTestParentChildRunner(t, s, s.NewChild())
 }
 
 func TestNewParent(t *testing.T) {
 	t.Parallel()
 
-	s := vrunner.New()
+	s := vrun.New()
 	doTestParentChildRunner(t, s.NewParent(), s)
 }
 
-func doTestParentChildRunner(t *testing.T, parent, child *vrunner.Runner) {
+func doTestParentChildRunner(t *testing.T, parent, child *vrun.Runner) {
 	t.Helper()
 
 	var (
@@ -156,7 +156,7 @@ func TestNewChildFromChan(t *testing.T) {
 	t.Parallel()
 
 	c := make(chan struct{})
-	s := vrunner.NewChild(c)
+	s := vrun.NewChild(c)
 
 	var status1 int64
 

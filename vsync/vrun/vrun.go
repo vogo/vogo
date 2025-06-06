@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package vrunner
+package vrun
 
 import (
 	"sync"
