@@ -95,7 +95,8 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 		return
 	}
 
-	if code != vhttperror.CodeOK {
+	if code != vhttperror.CodeOK &&
+		code != vhttperror.CodeUnauthenticatedErr {
 		vlog.Errorf("http response error: %s", b)
 	}
 
