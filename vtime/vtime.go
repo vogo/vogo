@@ -97,7 +97,7 @@ func FormatDateTime(t time.Time) string {
 }
 
 func DateTimeString(t *time.Time) string {
-	if t == nil {
+	if t == nil || t.IsZero() {
 		return ""
 	}
 
@@ -105,7 +105,7 @@ func DateTimeString(t *time.Time) string {
 }
 
 func DateString(t *time.Time) string {
-	if t == nil {
+	if t == nil || t.IsZero() {
 		return ""
 	}
 
@@ -113,7 +113,7 @@ func DateString(t *time.Time) string {
 }
 
 func HourMinuteString(t *time.Time) string {
-	if t == nil {
+	if t == nil || t.IsZero() {
 		return ""
 	}
 
@@ -121,7 +121,7 @@ func HourMinuteString(t *time.Time) string {
 }
 
 func DateHourMinuteString(t *time.Time) string {
-	if t == nil {
+	if t == nil || t.IsZero() {
 		return ""
 	}
 
