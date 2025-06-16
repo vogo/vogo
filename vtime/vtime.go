@@ -91,3 +91,39 @@ func FormatHourMinute(t time.Time) string {
 func FormatDate(t time.Time) string {
 	return t.Format(DateLayout)
 }
+
+func FormatDateTime(t time.Time) string {
+	return t.Format(DateTimeLayout)
+}
+
+func DateTimeString(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
+
+	return t.Format(DateTimeLayout)
+}
+
+func DateString(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
+
+	return t.Format(DateLayout)
+}
+
+func HourMinuteString(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
+
+	return t.Format(HourMinuteLayout)
+}
+
+func DateHourMinuteString(t *time.Time) string {
+	if t == nil {
+		return ""
+	}
+
+	return t.Format(DateHourMinuteLayout)
+}
