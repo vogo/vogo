@@ -47,6 +47,15 @@ func EnvString(key string) string {
 	return v
 }
 
+func GetEnvStr(key string, defaultValue string) string {
+	v, ok := os.LookupEnv(key)
+	if !ok {
+		return defaultValue
+	}
+
+	return v
+}
+
 func EnsureEnvInt(key string) int {
 	v, ok := os.LookupEnv(key)
 	if !ok {
@@ -70,12 +79,40 @@ func EnvInt(key string) int {
 	return intValue
 }
 
+func GetEnvInt(key string, defaultValue int) int {
+	v, ok := os.LookupEnv(key)
+	if !ok {
+		return defaultValue
+	}
+
+	intValue, err := strconv.Atoi(v)
+	if err != nil {
+		return defaultValue
+	}
+
+	return intValue
+}
+
 func EnsureEnvInt64(key string) int64 {
 	return int64(EnsureEnvInt(key))
 }
 
 func EnvInt64(key string) int64 {
 	return int64(EnvInt(key))
+}
+
+func GetEnvInt64(key string, defaultValue int64) int64 {
+	v, ok := os.LookupEnv(key)
+	if !ok {
+		return defaultValue
+	}
+
+	intValue, err := strconv.ParseInt(v, 10, 64)
+	if err != nil {
+		return defaultValue
+	}
+
+	return intValue
 }
 
 var ignoreLoadEnvs = []string{"JAVA_OPTS", "CLASSPATH"}

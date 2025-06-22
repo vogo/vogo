@@ -196,12 +196,10 @@ func Panicln(a ...any) {
 	panic(s)
 }
 
-var (
-	bytesPool = sync.Pool{New: func() any {
-		b := make([]byte, 0, 1024)
-		return &b
-	}}
-)
+var bytesPool = sync.Pool{New: func() any {
+	b := make([]byte, 0, 1024)
+	return &b
+}}
 
 // WriteLog write log data
 func WriteLog(tag, s string) {
