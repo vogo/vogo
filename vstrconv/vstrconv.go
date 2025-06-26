@@ -145,3 +145,11 @@ func I64toa(i int64) string {
 func I32toa(i int32) string {
 	return strconv.FormatInt(int64(i), 10)
 }
+
+func Ftoa(f float64) string {
+	return strconv.FormatFloat(f, 'f', -1, 64)
+}
+
+func F32toa(f float32) string {
+	return strconv.FormatFloat(float64(f), 'f', -1, 32)
+}
