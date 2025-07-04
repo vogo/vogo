@@ -22,6 +22,7 @@ import (
 	"net/http"
 
 	"github.com/vogo/vogo/vlog"
+	"github.com/vogo/vogo/vnet/vhttp"
 	"github.com/vogo/vogo/vnet/vhttp/vhttperror"
 )
 
@@ -89,7 +90,8 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 	}
 	b, err := json.Marshal(resp)
 	if err != nil {
-		vlog.Errorf("http respons json marshal error: %+v, data: %v", err, resp)
+		vlog.Errorf("http response json marshal error: %+v, data: %v, remote: %s, user-agent: %s",
+			err, resp, vhttp.RemoteIP(req), req.UserAgent())
 
 		_, _ = w.Write([]byte(`{"code":10,"msg":"internal error"}`))
 		return
@@ -97,12 +99,14 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 
 	if code != vhttperror.CodeOK &&
 		code != vhttperror.CodeUnauthenticatedErr {
-		vlog.Errorf("http response error: %s", b)
+		vlog.Errorf("http response error: %s, remote: %s, user-agent: %s",
+			b, vhttp.RemoteIP(req), req.UserAgent())
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	_, err = w.Write(b)
 	if err != nil {
-		vlog.Errorf("http respons write error: %+v, data: %v", err, resp)
+		vlog.Errorf("http response write error: %+v, data: %v, remote: %s, user-agent: %s",
+			err, resp, vhttp.RemoteIP(req), req.UserAgent())
 	}
 }
