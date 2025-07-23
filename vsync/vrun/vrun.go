@@ -121,6 +121,13 @@ func (s *Runner) Interval(task Task, interval time.Duration) {
 	}()
 }
 
+// Handle handle multiple handlers.
+func (s *Runner) Handle(handlers ...func(*Runner)) {
+	for _, handler := range handlers {
+		handler(s)
+	}
+}
+
 // New create a new Runner.
 func New() *Runner {
 	return &Runner{
