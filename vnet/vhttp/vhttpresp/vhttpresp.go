@@ -19,7 +19,9 @@ package vhttpresp
 
 import (
 	"encoding/json"
+	"io"
 	"net/http"
+	"strings"
 
 	"github.com/vogo/vogo/vlog"
 	"github.com/vogo/vogo/vnet/vhttp"
@@ -97,10 +99,28 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 		return
 	}
 
-	if code != vhttperror.CodeOK &&
-		code != vhttperror.CodeUnauthenticatedErr {
-		vlog.Errorf("http response error: %s, remote: %s, user-agent: %s",
-			b, vhttp.RemoteIP(req), req.UserAgent())
+	debugLog := strings.Contains(req.Header.Get("x-develop-flag"), "debug-log")
+
+	// log request
+	if debugLog {
+		if req.Method == http.MethodGet {
+			vlog.Infof("http request: %s, parameter: %s", req.RequestURI, req.URL.RawQuery)
+		} else {
+			body, _ := io.ReadAll(req.Body)
+			if err != nil {
+				vlog.Errorf("http request body read error: %+v", err)
+			}
+			vlog.Infof("http request: %s, parameter: %s", req.RequestURI, body)
+		}
+	}
+
+	// log response
+	if code != vhttperror.CodeOK && code != vhttperror.CodeUnauthenticatedErr {
+		vlog.Warnf("http response error, uri: %s, data: %s, remote: %s, user-agent: %s",
+			req.RequestURI, b, vhttp.RemoteIP(req), req.UserAgent())
+	} else if debugLog {
+		vlog.Infof("http response, uri: %s, data: %s, remote: %s, user-agent: %s",
+			req.RequestURI, b, vhttp.RemoteIP(req), req.UserAgent())
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
