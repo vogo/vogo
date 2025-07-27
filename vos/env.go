@@ -115,6 +115,18 @@ func GetEnvInt64(key string, defaultValue int64) int64 {
 	return intValue
 }
 
+func EnvBool(key string) bool {
+	return GetEnvStr(key, "false") == "true"
+}
+
+func GetEnvBool(key string, defaultValue bool) bool {
+	return GetEnvStr(key, strconv.FormatBool(defaultValue)) == "true"
+}
+
+func EnsureEnvBool(key string) bool {
+	return EnsureEnvString(key) == "true"
+}
+
 var ignoreLoadEnvs = []string{"JAVA_OPTS", "CLASSPATH"}
 
 func isLoadIgnoreEnv(e string) bool {
