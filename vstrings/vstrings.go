@@ -66,7 +66,7 @@ func AfterLast(s, sep string) string {
 		return s
 	}
 
-	return s[index+1:]
+	return s[index+len(sep):]
 }
 
 // BeforeFirst returns the substring before the first occurrence of sep in s.
