@@ -358,7 +358,7 @@ func TestDateTimeString(t *testing.T) {
 			"2023-12-25 15:30:45",
 		},
 		{"nil pointer", nil, ""},
-		{"zero time", &[]time.Time{time.Time{}}[0], ""},
+		{"zero time", &[]time.Time{{}}[0], ""},
 	}
 
 	for _, tt := range tests {
@@ -383,7 +383,7 @@ func TestDateString(t *testing.T) {
 			"2023-12-25",
 		},
 		{"nil pointer", nil, ""},
-		{"zero time", &[]time.Time{time.Time{}}[0], ""},
+		{"zero time", &[]time.Time{{}}[0], ""},
 	}
 
 	for _, tt := range tests {
@@ -408,7 +408,7 @@ func TestHourMinuteString(t *testing.T) {
 			"15:30",
 		},
 		{"nil pointer", nil, ""},
-		{"zero time", &[]time.Time{time.Time{}}[0], ""},
+		{"zero time", &[]time.Time{{}}[0], ""},
 	}
 
 	for _, tt := range tests {
@@ -433,7 +433,7 @@ func TestDateHourMinuteString(t *testing.T) {
 			"2023-12-25 15:30",
 		},
 		{"nil pointer", nil, ""},
-		{"zero time", &[]time.Time{time.Time{}}[0], ""},
+		{"zero time", &[]time.Time{{}}[0], ""},
 	}
 
 	for _, tt := range tests {

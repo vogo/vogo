@@ -38,8 +38,8 @@ func Intn(n int) int {
 	return int(Intn64(int64(n)))
 }
 
-// RandomString return a random string with given length, and all characters are from the source string.
-func RandomString(src string, length int) string {
+// RandomBytes return a random bytes with given length, and all bytes are from the source strings.
+func RandomBytes(src string, length int) []byte {
 	srcLen := len(src)
 
 	buf := make([]byte, length)
@@ -52,7 +52,12 @@ func RandomString(src string, length int) string {
 		buf[i], buf[j] = buf[j], buf[i]
 	})
 
-	return string(buf)
+	return buf
+}
+
+// RandomString return a random string with given length, and all characters are from the source string.
+func RandomString(src string, length int) string {
+	return string(RandomBytes(src, length))
 }
 
 // RandomSeedString return random string as function RandomString, but set seed first.

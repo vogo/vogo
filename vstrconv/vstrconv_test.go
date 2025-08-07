@@ -25,9 +25,9 @@ import (
 // Test Ensure functions (should panic on invalid input)
 func TestEnsureInt(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
-		expected int
+		name        string
+		input       string
+		expected    int
 		shouldPanic bool
 	}{
 		{"valid positive", "123", 123, false},
@@ -57,9 +57,9 @@ func TestEnsureInt(t *testing.T) {
 
 func TestEnsureInt64(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
-		expected int64
+		name        string
+		input       string
+		expected    int64
 		shouldPanic bool
 	}{
 		{"valid positive", "9223372036854775807", 9223372036854775807, false},
@@ -88,9 +88,9 @@ func TestEnsureInt64(t *testing.T) {
 
 func TestEnsureInt32(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
-		expected int32
+		name        string
+		input       string
+		expected    int32
 		shouldPanic bool
 	}{
 		{"valid positive", "2147483647", 2147483647, false},
@@ -119,9 +119,9 @@ func TestEnsureInt32(t *testing.T) {
 
 func TestEnsureUint(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
-		expected uint
+		name        string
+		input       string
+		expected    uint
 		shouldPanic bool
 	}{
 		{"valid positive", "123", 123, false},
@@ -149,9 +149,9 @@ func TestEnsureUint(t *testing.T) {
 
 func TestEnsureUint64(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
-		expected uint64
+		name        string
+		input       string
+		expected    uint64
 		shouldPanic bool
 	}{
 		{"valid positive", "18446744073709551615", 18446744073709551615, false},
@@ -179,9 +179,9 @@ func TestEnsureUint64(t *testing.T) {
 
 func TestEnsureBool(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
-		expected bool
+		name        string
+		input       string
+		expected    bool
 		shouldPanic bool
 	}{
 		{"true", "true", true, false},
@@ -211,9 +211,9 @@ func TestEnsureBool(t *testing.T) {
 
 func TestEnsureFloat64(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
-		expected float64
+		name        string
+		input       string
+		expected    float64
 		shouldPanic bool
 	}{
 		{"valid positive", "123.45", 123.45, false},
@@ -243,9 +243,9 @@ func TestEnsureFloat64(t *testing.T) {
 
 func TestEnsureFloat32(t *testing.T) {
 	tests := []struct {
-		name     string
-		input    string
-		expected float32
+		name        string
+		input       string
+		expected    float32
 		shouldPanic bool
 	}{
 		{"valid positive", "123.45", 123.45, false},
