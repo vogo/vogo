@@ -33,7 +33,9 @@ func TestZipDir(t *testing.T) {
 	t.Parallel()
 
 	workDir := filepath.Join(os.TempDir(), "test_zip_dir")
-	defer os.RemoveAll(workDir)
+	defer func() {
+		_ = os.RemoveAll(workDir)
+	}()
 
 	assert.NoError(t, os.MkdirAll(filepath.Join(workDir, "a", "b"), os.ModePerm))
 

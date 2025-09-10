@@ -31,7 +31,7 @@ func NewDate(t time.Time) *Date {
 }
 
 func (d Date) MarshalJSON() ([]byte, error) {
-	return json.Marshal(d.Time.Format(DateLayout))
+	return json.Marshal(d.Format(DateLayout))
 }
 
 func (d *Date) UnmarshalJSON(data []byte) error {
@@ -49,7 +49,7 @@ func (d *Date) UnmarshalJSON(data []byte) error {
 }
 
 func (d Date) String() string {
-	return d.Time.Format(DateLayout)
+	return d.Format(DateLayout)
 }
 
 func (d *Date) UnmarshalText(data []byte) error {

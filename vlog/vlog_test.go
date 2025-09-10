@@ -47,7 +47,9 @@ func TestLogger(t *testing.T) {
 
 func TestSetWriter(t *testing.T) {
 	logFile := os.TempDir() + "/test_golang_logger.WriteLog"
-	defer os.Remove(logFile)
+	defer func() {
+		_ = os.Remove(logFile)
+	}()
 
 	f, _ := os.Create(logFile)
 

@@ -43,7 +43,9 @@ func LimitUnzip(src, destDir string, limitSize int64) error {
 	if err != nil {
 		return err
 	}
-	defer r.Close()
+	defer func() {
+		_ = r.Close()
+	}()
 
 	// Make File
 	if err := os.MkdirAll(destDir, os.ModePerm); err != nil {
@@ -89,7 +91,10 @@ func unzipFile(destDir string, f *zip.File, limitSize int64) error {
 
 	_, err = io.CopyN(outFile, rc, limitSize)
 
-	outFile.Close()
+	if closeErr := outFile.Close(); closeErr != nil {
+		_ = rc.Close()
+		return closeErr
+	}
 	_ = rc.Close()
 
 	// ignore EOF for copyN
@@ -106,10 +111,14 @@ func ZipDir(zipPath, dir string) error {
 	if err != nil {
 		return err
 	}
-	defer newZipFile.Close()
+	defer func() {
+		_ = newZipFile.Close()
+	}()
 
 	zipWriter := zip.NewWriter(newZipFile)
-	defer zipWriter.Close()
+	defer func() {
+		_ = zipWriter.Close()
+	}()
 
 	baseDirLen := len(dir)
 	if dir[len(dir)-1] != '/' {
@@ -136,7 +145,9 @@ func AddFileToZip(zipWriter *zip.Writer, filePath, pathInZip string) error {
 	if err != nil {
 		return err
 	}
-	defer fileToZip.Close()
+	defer func() {
+		_ = fileToZip.Close()
+	}()
 
 	// Get the file information
 	info, err := fileToZip.Stat()

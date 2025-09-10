@@ -87,7 +87,9 @@ func DownloadFile(filePath, rawURL string, timeout time.Duration) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	switch resp.StatusCode {
 	case http.StatusOK:
@@ -152,7 +154,9 @@ func Get(rawURL string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -233,7 +237,9 @@ func parseJSONResponse(method, urlAddr string, headers map[string]string, body i
 		return err
 	}
 
-	defer resp.Body.Close()
+	defer func() {
+		_ = resp.Body.Close()
+	}()
 
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {

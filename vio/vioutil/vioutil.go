@@ -82,7 +82,9 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 
 		return
 	}
-	defer src.Close()
+	defer func() {
+		_ = src.Close()
+	}()
 
 	dst, err := os.OpenFile(dstName, os.O_WRONLY|os.O_CREATE, 0o644)
 	if err != nil {
@@ -90,7 +92,9 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 
 		return
 	}
-	defer dst.Close()
+	defer func() {
+		_ = dst.Close()
+	}()
 	log.Printf("copy file success, dst: %s, src: %s", dst.Name(), src.Name())
 
 	return io.Copy(dst, src)
@@ -187,7 +191,7 @@ func ListFileNames(dirPath, prefix, suffix string) ([]string, error) {
 
 // Move move a file from a path to another path.
 func Move(from, to string) error {
-	os.Remove(to)
+	_ = os.Remove(to)
 
 	return os.Rename(from, to)
 }
@@ -200,7 +204,9 @@ func Dos2Unix(fileName string) error {
 	if err != nil {
 		return err
 	}
-	defer file.Close()
+	defer func() {
+		_ = file.Close()
+	}()
 
 	tmpFileName := fileName + ".tmp"
 
@@ -209,7 +215,9 @@ func Dos2Unix(fileName string) error {
 		return err
 	}
 
-	defer wFile.Close()
+	defer func() {
+		_ = wFile.Close()
+	}()
 
 	w := bufio.NewWriter(wFile)
 

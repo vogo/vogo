@@ -164,10 +164,7 @@ func TestAppendIfCheckPass(t *testing.T) {
 		{"bool empty slice even length should append", []bool{}, true, func(slice []bool, elem bool) bool { return len(slice)%2 == 0 }, []bool{true}},
 		// Custom struct tests
 		{"person no one over 50 should append", []Person{{"Alice", 25}, {"Bob", 30}}, Person{"Charlie", 35}, func(slice []Person, elem Person) bool {
-			if elem.Age > 50 {
-				return false
-			}
-			return true
+			return elem.Age <= 50
 		}, []Person{{"Alice", 25}, {"Bob", 30}, {"Charlie", 35}}},
 		{"person someone over 50 should not append", []Person{{"Alice", 25}, {"Bob", 60}}, Person{"Charlie", 35}, func(slice []Person, elem Person) bool {
 			for _, p := range slice {

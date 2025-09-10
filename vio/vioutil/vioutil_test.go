@@ -104,7 +104,9 @@ echo $result
 		return
 	}
 
-	file.Close()
+	if err = file.Close(); err != nil {
+		t.Fatalf("Failed to close file: %v", err)
+	}
 
 	err = vioutil.Dos2Unix(fileName)
 	if !assert.Nil(t, err) {

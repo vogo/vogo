@@ -50,8 +50,8 @@ func SingleCommandResult(fullCommand string) (string, error) {
 	}
 
 	result := string(output)
-	result = strings.Replace(result, "\r", "", -1)
-	result = strings.Replace(result, "\n", "", -1)
+	result = strings.ReplaceAll(result, "\r", "")
+	result = strings.ReplaceAll(result, "\n", "")
 
 	return result, nil
 }
