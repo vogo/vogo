@@ -19,7 +19,10 @@
 
 package vstrings
 
-import "strings"
+import (
+	"strings"
+	"unicode/utf8"
+)
 
 // ContainsIn checks if a string is in a string slice.
 func ContainsIn(items []string, item string) bool {
@@ -109,4 +112,72 @@ func BeforeLastInclude(s, sep string) string {
 		return s
 	}
 	return s[:index+len(sep)]
+}
+
+// RuneCut cuts the string by rune length.
+func RuneCut(s string, max int) string {
+	if max <= 0 {
+		return ""
+	}
+	if utf8.RuneCountInString(s) <= max {
+		return s
+	}
+	return string([]rune(s)[:max])
+}
+
+// RuneCutLast cuts the string by rune length from the end.
+func RuneCutLast(s string, max int) string {
+	if max <= 0 {
+		return ""
+	}
+	length := utf8.RuneCountInString(s)
+	if length <= max {
+		return s
+	}
+	return string([]rune(s)[length-max:])
+}
+
+const (
+	Ellipsis = "..."
+)
+
+// RuneCutWithEllipsis cuts the string by rune length with ellipsis.
+func RuneCutWithEllipsis(s string, max int) string {
+	if max <= 0 {
+		return ""
+	}
+
+	length := utf8.RuneCountInString(s)
+
+	if length <= max {
+		return s
+	}
+
+	r := []rune(s)
+
+	if max <= len(Ellipsis) {
+		return Ellipsis
+	}
+
+	return string(r[:max-len(Ellipsis)]) + Ellipsis
+}
+
+// RuneCutLastWithEllipsis cuts the string by rune length from the end with ellipsis.
+func RuneCutLastWithEllipsis(s string, max int) string {
+	if max <= 0 {
+		return ""
+	}
+
+	length := utf8.RuneCountInString(s)
+	if length <= max {
+		return s
+	}
+
+	r := []rune(s)
+
+	if max <= len(Ellipsis) {
+		return Ellipsis
+	}
+
+	return Ellipsis + string(r[length-max+len(Ellipsis):])
 }

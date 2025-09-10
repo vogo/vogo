@@ -346,3 +346,125 @@ func ExampleBeforeLast() {
 	result = BeforeLast("file.txt", ".")
 	_ = result // "file"
 }
+
+func TestRuneCut(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		max      int
+		expected string
+	}{
+		{"normal case", "hello world", 5, "hello"},
+		{"exact length", "hello", 5, "hello"},
+		{"longer than max", "hello world test", 8, "hello wo"},
+		{"empty string", "", 5, ""},
+		{"zero max", "hello", 0, ""},
+		{"negative max", "hello", -1, ""},
+		{"unicode characters", "你好世界", 2, "你好"},
+		{"mixed unicode", "hello你好", 6, "hello你"},
+		{"single character", "a", 1, "a"},
+		{"emoji", "😀😃😄😁", 2, "😀😃"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := RuneCut(tt.s, tt.max)
+			if result != tt.expected {
+				t.Errorf("Expected %q, got %q", tt.expected, result)
+			}
+		})
+	}
+}
+
+func TestRuneCutLast(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		max      int
+		expected string
+	}{
+		{"normal case", "hello world", 5, "world"},
+		{"exact length", "hello", 5, "hello"},
+		{"longer than max", "hello world test", 8, "rld test"},
+		{"empty string", "", 5, ""},
+		{"zero max", "hello", 0, ""},
+		{"negative max", "hello", -1, ""},
+		{"unicode characters", "你好世界", 2, "世界"},
+		{"mixed unicode", "hello你好", 6, "ello你好"},
+		{"single character", "a", 1, "a"},
+		{"emoji", "😀😃😄😁", 2, "😄😁"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := RuneCutLast(tt.s, tt.max)
+			if result != tt.expected {
+				t.Errorf("Expected %q, got %q", tt.expected, result)
+			}
+		})
+	}
+}
+
+func TestRuneCutWithEllipsis(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		max      int
+		expected string
+	}{
+		{"normal case", "hello world", 8, "hello..."},
+		{"exact length", "hello", 5, "hello"},
+		{"shorter than string", "hello world test", 10, "hello w..."},
+		{"empty string", "", 5, ""},
+		{"max equals ellipsis length", "hello", 3, "..."},
+		{"max less than ellipsis length", "hello", 2, "..."},
+		{"zero max", "hello", 0, ""},
+		{"negative max", "hello", -1, ""},
+		{"unicode characters", "你好世界测试", 4, "你..."},
+		{"mixed unicode", "hello你好世界", 8, "hello..."},
+		{"single character", "a", 1, "a"},
+		{"emoji", "😀😃😄😁😆", 3, "..."},
+		{"emoji normal", "😀😃😄😁😆", 4, "😀..."},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := RuneCutWithEllipsis(tt.s, tt.max)
+			if result != tt.expected {
+				t.Errorf("Expected %q, got %q", tt.expected, result)
+			}
+		})
+	}
+}
+
+func TestRuneCutLastWithEllipsis(t *testing.T) {
+	tests := []struct {
+		name     string
+		s        string
+		max      int
+		expected string
+	}{
+		{"normal case", "hello world", 8, "...world"},
+		{"exact length", "hello", 5, "hello"},
+		{"shorter than string", "hello world test", 10, "...ld test"},
+		{"empty string", "", 5, ""},
+		{"max equals ellipsis length", "hello", 3, "..."},
+		{"max less than ellipsis length", "hello", 2, "..."},
+		{"zero max", "hello", 0, ""},
+		{"negative max", "hello", -1, ""},
+		{"unicode characters", "你好世界测试", 4, "...试"},
+		{"mixed unicode", "hello你好世界", 8, "...o你好世界"},
+		{"single character", "a", 1, "a"},
+		{"emoji", "😀😃😄😁😆", 3, "..."},
+		{"emoji normal", "😀😃😄😁😆", 4, "...😆"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := RuneCutLastWithEllipsis(tt.s, tt.max)
+			if result != tt.expected {
+				t.Errorf("Expected %q, got %q", tt.expected, result)
+			}
+		})
+	}
+}
