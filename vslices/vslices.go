@@ -26,3 +26,11 @@ func AppendIfNotExist[T comparable](slice []T, elem T) []T {
 	}
 	return append(slice, elem)
 }
+
+// AppendIfCheckPass appends elem to slice if checker returns true.
+func AppendIfCheckPass[T any](slice []T, elem T, checker func([]T) bool) []T {
+	if checker(slice) {
+		return append(slice, elem)
+	}
+	return slice
+}

@@ -18,6 +18,7 @@
 package vslices
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -205,6 +206,247 @@ func BenchmarkAppendIfNotExist(b *testing.B) {
 			_ = AppendIfNotExist(emptySlice, 1)
 		}
 	})
+}
+
+func TestAppendIfCheckPass(t *testing.T) {
+	// Test with int slice
+	t.Run("int slice", func(t *testing.T) {
+		// Test checker returns true - should append
+		checker := func(slice []int) bool { return len(slice) < 5 }
+		result := AppendIfCheckPass([]int{1, 2, 3}, 4, checker)
+		expected := []int{1, 2, 3, 4}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Test checker returns false - should not append
+		checker = func(slice []int) bool { return len(slice) > 5 }
+		result = AppendIfCheckPass([]int{1, 2, 3}, 4, checker)
+		expected = []int{1, 2, 3}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Test with empty slice - checker returns true
+		checker = func(slice []int) bool { return len(slice) == 0 }
+		result = AppendIfCheckPass([]int{}, 1, checker)
+		expected = []int{1}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Test with empty slice - checker returns false
+		checker = func(slice []int) bool { return len(slice) > 0 }
+		result = AppendIfCheckPass([]int{}, 1, checker)
+		expected = []int{}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+	})
+
+	// Test with string slice
+	t.Run("string slice", func(t *testing.T) {
+		// Test checker based on slice content
+		checker := func(slice []string) bool {
+			for _, s := range slice {
+				if s == "forbidden" {
+					return false
+				}
+			}
+			return true
+		}
+
+		// Should append - no forbidden string
+		result := AppendIfCheckPass([]string{"a", "b"}, "c", checker)
+		expected := []string{"a", "b", "c"}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Should not append - contains forbidden string
+		result = AppendIfCheckPass([]string{"a", "forbidden", "b"}, "c", checker)
+		expected = []string{"a", "forbidden", "b"}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Test with empty string
+		result = AppendIfCheckPass([]string{"a", "b"}, "", checker)
+		expected = []string{"a", "b", ""}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+	})
+
+	// Test with float64 slice
+	t.Run("float64 slice", func(t *testing.T) {
+		// Test checker based on sum
+		checker := func(slice []float64) bool {
+			sum := 0.0
+			for _, f := range slice {
+				sum += f
+			}
+			return sum < 10.0
+		}
+
+		// Should append - sum is less than 10
+		result := AppendIfCheckPass([]float64{1.1, 2.2, 3.3}, 1.0, checker)
+		expected := []float64{1.1, 2.2, 3.3, 1.0}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Should not append - sum would exceed 10
+		result = AppendIfCheckPass([]float64{5.0, 4.0, 2.0}, 1.0, checker)
+		expected = []float64{5.0, 4.0, 2.0}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Test with zero value
+		result = AppendIfCheckPass([]float64{1.0, 2.0}, 0.0, checker)
+		expected = []float64{1.0, 2.0, 0.0}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+	})
+
+	// Test with bool slice
+	t.Run("bool slice", func(t *testing.T) {
+		// Test checker that allows append only if slice has even length
+		checker := func(slice []bool) bool { return len(slice)%2 == 0 }
+
+		// Should append - even length
+		result := AppendIfCheckPass([]bool{true, false}, true, checker)
+		expected := []bool{true, false, true}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Should not append - odd length
+		result = AppendIfCheckPass([]bool{true}, false, checker)
+		expected = []bool{true}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Test with empty slice - even length (0)
+		result = AppendIfCheckPass([]bool{}, true, checker)
+		expected = []bool{true}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+	})
+
+	// Test with custom struct
+	t.Run("custom struct", func(t *testing.T) {
+		type Person struct {
+			Name string
+			Age  int
+		}
+
+		// Test checker based on struct field
+		checker := func(slice []Person) bool {
+			for _, p := range slice {
+				if p.Age > 50 {
+					return false
+				}
+			}
+			return true
+		}
+
+		// Should append - no one over 50
+		people := []Person{{"Alice", 25}, {"Bob", 30}}
+		newPerson := Person{"Charlie", 35}
+		result := AppendIfCheckPass(people, newPerson, checker)
+		expected := []Person{{"Alice", 25}, {"Bob", 30}, {"Charlie", 35}}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Should not append - someone over 50
+		people = []Person{{"Alice", 25}, {"Bob", 60}}
+		result = AppendIfCheckPass(people, newPerson, checker)
+		expected = []Person{{"Alice", 25}, {"Bob", 60}}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+	})
+
+	// Test edge cases
+	t.Run("edge cases", func(t *testing.T) {
+		// Test with nil checker (this would panic, but we test with always true)
+		alwaysTrue := func(slice []int) bool { return true }
+		result := AppendIfCheckPass([]int{1, 2}, 3, alwaysTrue)
+		expected := []int{1, 2, 3}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Test with always false checker
+		alwaysFalse := func(slice []int) bool { return false }
+		result = AppendIfCheckPass([]int{1, 2}, 3, alwaysFalse)
+		expected = []int{1, 2}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		// Test with single element slice
+		checker := func(slice []int) bool { return slice[0] > 0 }
+		result = AppendIfCheckPass([]int{5}, 10, checker)
+		expected = []int{5, 10}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+
+		result = AppendIfCheckPass([]int{-5}, 10, checker)
+		expected = []int{-5}
+		if !reflect.DeepEqual(result, expected) {
+			t.Errorf("Expected %v, got %v", expected, result)
+		}
+	})
+}
+
+// Benchmark tests for AppendIfCheckPass
+func BenchmarkAppendIfCheckPass(b *testing.B) {
+	slice := []int{1, 2, 3, 4, 5}
+	checker := func(s []int) bool { return len(s) < 10 }
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = AppendIfCheckPass(slice, i, checker)
+	}
+}
+
+func ExampleAppendIfCheckPass() {
+	// Example with length-based checker
+	slice := []int{1, 2, 3}
+	lengthChecker := func(s []int) bool { return len(s) < 5 }
+
+	result := AppendIfCheckPass(slice, 4, lengthChecker)
+	fmt.Println(result) // [1 2 3 4]
+
+	result = AppendIfCheckPass([]int{1, 2, 3, 4, 5}, 6, lengthChecker)
+	fmt.Println(result) // [1 2 3 4 5]
+
+	// Example with content-based checker
+	strings := []string{"apple", "banana"}
+	contentChecker := func(s []string) bool {
+		for _, str := range s {
+			if str == "forbidden" {
+				return false
+			}
+		}
+		return true
+	}
+
+	result2 := AppendIfCheckPass(strings, "cherry", contentChecker)
+	fmt.Println(result2) // [apple banana cherry]
+
+	// Output:
+	// [1 2 3 4]
+	// [1 2 3 4 5]
+	// [apple banana cherry]
 }
 
 // Example test
