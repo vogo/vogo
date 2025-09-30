@@ -23,6 +23,11 @@ import "time"
 
 const (
 	DateTimeLayout = "2006-01-02 15:04:05"
+
+	// DateHourMinuteLayout is the layout for service time
+	DateHourMinuteLayout = "2006-01-02 15:04"
+	DateLayout           = "2006-01-02"
+	HourMinuteLayout     = "15:04"
 )
 
 var (
@@ -48,6 +53,11 @@ func Parse(str string) (time.Time, error) {
 	return time.ParseInLocation(DateTimeLayout, str, TimeLocation)
 }
 
+// ParseDate parses a string to date.
+func ParseDate(str string) (time.Time, error) {
+	return time.ParseInLocation(DateLayout, str, TimeLocation)
+}
+
 // Milliseconds returns the current time in milliseconds.
 func Milliseconds() int64 {
 	return time.Now().UnixMilli()
@@ -64,13 +74,6 @@ func ToMilliseconds(t time.Time) int64 {
 func FromMilliseconds(m int64) time.Time {
 	return time.UnixMilli(m)
 }
-
-const (
-	// DateHourMinuteLayout is the layout for service time
-	DateHourMinuteLayout = "2006-01-02 15:04"
-	DateLayout           = "2006-01-02"
-	HourMinuteLayout     = "15:04"
-)
 
 func ParseDateHourMinute(t string) (time.Time, error) {
 	if len(t) == len(DateHourMinuteLayout)+3 {
