@@ -28,10 +28,10 @@ import (
 	"github.com/vogo/vogo/vnet/vhttp/vhttperror"
 )
 
-type ResponseBody struct {
+type ResponseBody[T any] struct {
 	Code int    `json:"code"`
 	Msg  string `json:"msg,omitempty"`
-	Data any    `json:"data,omitempty"`
+	Data T      `json:"data,omitempty"`
 }
 
 func Data(w http.ResponseWriter, req *http.Request, code int, data any) {
@@ -85,7 +85,7 @@ func CodeMsg(w http.ResponseWriter, req *http.Request, code int, msg string) {
 }
 
 func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data any) {
-	resp := ResponseBody{
+	resp := ResponseBody[any]{
 		Code: code,
 		Msg:  msg,
 		Data: data,
