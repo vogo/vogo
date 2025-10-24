@@ -78,7 +78,7 @@ func IsFile(path string) bool {
 func CopyFile(dstName, srcName string) (written int64, err error) {
 	src, err := os.Open(srcName)
 	if err != nil {
-		log.Printf("open src file fail, err: " + err.Error())
+		log.Printf("open src file fail, err: %v", err)
 
 		return
 	}
@@ -88,7 +88,7 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 
 	dst, err := os.OpenFile(dstName, os.O_WRONLY|os.O_CREATE, 0o644)
 	if err != nil {
-		log.Printf("open dst file fail, err: " + err.Error())
+		log.Printf("open dst file fail, err: %v", err)
 
 		return
 	}
