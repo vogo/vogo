@@ -33,9 +33,38 @@ func Intn64(n int64) int64 {
 	return nBig.Int64()
 }
 
+// Intn64Range returns a non-negative pseudo-random int64 in [min,max].
+func Intn64Range(min, max int64) int64 {
+	if min >= max {
+		min, max = max, min
+	}
+	return min + Intn64(max-min+1)
+}
+
 // Intn returns a non-negative pseudo-random int in [0,n).
 func Intn(n int) int {
 	return int(Intn64(int64(n)))
+}
+
+// IntnRange returns a non-negative pseudo-random int in [min,max).
+func IntnRange(min, max int) int {
+	if min >= max {
+		min, max = max, min
+	}
+	return min + Intn(max-min)
+}
+
+// Float64 returns a pseudo-random float64 in [0.0,1.0).
+func Float64() float64 {
+	return mathRand.Float64()
+}
+
+// Float64Range returns a pseudo-random float64 in [min,max).
+func Float64Range(min, max float64) float64 {
+	if min >= max {
+		min, max = max, min
+	}
+	return min + Float64()*(max-min)
 }
 
 // RandomBytes return a random bytes with given length, and all bytes are from the source strings.
