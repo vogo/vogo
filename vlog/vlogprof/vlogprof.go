@@ -19,7 +19,6 @@ package main
 
 import (
 	"io"
-	"log"
 	"net/http"
 	_ "net/http/pprof"
 
@@ -28,7 +27,7 @@ import (
 
 func main() {
 	go func() {
-		log.Println(http.ListenAndServe(":6060", nil))
+		vlog.Infof("server listen error | err: %v", http.ListenAndServe(":6060", nil))
 	}()
 
 	vlog.SetOutput(io.Discard)

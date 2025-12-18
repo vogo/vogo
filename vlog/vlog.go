@@ -15,8 +15,7 @@
  * limitations under the License.
  */
 
-// Copyright 2019 The vogo Authors. All rights reserved.
-// author: wongoo
+// Recommend log format style: `"log msg | key1: %s | key2: %d | key3: %s | err: %v"` (pipe-separated key-value pairs, the name of key is in snake case)
 
 package vlog
 

@@ -21,12 +21,12 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 	"strings"
 	"syscall"
 
+	"github.com/vogo/vogo/vlog"
 	"github.com/vogo/vogo/vos/vexec"
 	"github.com/vogo/vogo/vstrings"
 )
@@ -46,7 +46,7 @@ func PidExist(pid int) bool {
 
 // Kill process.
 func Kill(pid int) error {
-	log.Printf("kill process %d", pid)
+	vlog.Printf("kill process | pid: %d", pid)
 
 	proc, err := os.FindProcess(pid)
 	if err != nil {
@@ -83,7 +83,7 @@ func GetPidByPort(port int) (int, error) {
 
 	p, err := strconv.Atoi(string(pid))
 	if err != nil {
-		log.Printf("can't find pid for port %d, result: %s", port, pid)
+		vlog.Printf("can't find pid for port | port: %d | result: %s", port, pid)
 
 		return -1, ErrPortNotFound
 	}

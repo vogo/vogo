@@ -92,8 +92,8 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 	}
 	b, err := json.Marshal(resp)
 	if err != nil {
-		vlog.Errorf("http response json marshal error: %+v, data: %v, remote: %s, user-agent: %s",
-			err, resp, vhttp.RemoteIP(req), req.UserAgent())
+		vlog.Errorf("http response json marshal error | remote: %s | user_agent: %s | data: %s | err: %+v",
+			vhttp.RemoteIP(req), req.UserAgent(), b, err)
 
 		_, _ = w.Write([]byte(`{"code":10,"msg":"internal error"}`))
 		return
@@ -104,29 +104,29 @@ func Write(w http.ResponseWriter, req *http.Request, code int, msg string, data 
 	// log request
 	if debugLog {
 		if req.Method == http.MethodGet {
-			vlog.Infof("http request: %s, parameter: %s", req.RequestURI, req.URL.RawQuery)
+			vlog.Infof("http request | uri: %s | parameter: %s", req.RequestURI, req.URL.RawQuery)
 		} else {
-			body, _ := io.ReadAll(req.Body)
-			if err != nil {
-				vlog.Errorf("http request body read error: %+v", err)
+			body, readErr := io.ReadAll(req.Body)
+			if readErr != nil {
+				vlog.Errorf("http request body read error | err: %+v", readErr)
 			}
-			vlog.Infof("http request: %s, parameter: %s", req.RequestURI, body)
+			vlog.Infof("http request | uri: %s | parameter: %s", req.RequestURI, body)
 		}
 	}
 
 	// log response
 	if code != vhttperror.CodeOK && code != vhttperror.CodeUnauthenticatedErr {
-		vlog.Warnf("http response error, uri: %s, data: %s, remote: %s, user-agent: %s",
+		vlog.Warnf("http response error | uri: %s | data: %s | remote: %s | user_agent: %s",
 			req.RequestURI, b, vhttp.RemoteIP(req), req.UserAgent())
 	} else if debugLog {
-		vlog.Infof("http response, uri: %s, data: %s, remote: %s, user-agent: %s",
-			req.RequestURI, b, vhttp.RemoteIP(req), req.UserAgent())
+		vlog.Infof("http response | uri: %s | remote: %s | user_agent: %s | data: %s",
+			req.RequestURI, vhttp.RemoteIP(req), req.UserAgent(), b)
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	_, err = w.Write(b)
 	if err != nil {
-		vlog.Errorf("http response write error: %+v, data: %v, remote: %s, user-agent: %s",
-			err, resp, vhttp.RemoteIP(req), req.UserAgent())
+		vlog.Errorf("http response write error | remote: %s | user_agent: %s | data: %s | err: %+v",
+			vhttp.RemoteIP(req), req.UserAgent(), b, err)
 	}
 }

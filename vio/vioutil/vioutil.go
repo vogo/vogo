@@ -22,20 +22,20 @@ package vioutil
 import (
 	"bufio"
 	"io"
-	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/vogo/vogo/vbytes"
+	"github.com/vogo/vogo/vlog"
 )
 
 // ReadFile read file to string.
 func ReadFile(filePath string) string {
 	bytes, err := os.ReadFile(filePath)
 	if err != nil {
-		log.Print(err.Error())
+		vlog.Printf("read file error | err: %v", err)
 	}
 
 	return string(bytes)
@@ -78,7 +78,7 @@ func IsFile(path string) bool {
 func CopyFile(dstName, srcName string) (written int64, err error) {
 	src, err := os.Open(srcName)
 	if err != nil {
-		log.Printf("open src file fail, err: %v", err)
+		vlog.Printf("open src file fail | err: %v", err)
 
 		return
 	}
@@ -88,14 +88,14 @@ func CopyFile(dstName, srcName string) (written int64, err error) {
 
 	dst, err := os.OpenFile(dstName, os.O_WRONLY|os.O_CREATE, 0o644)
 	if err != nil {
-		log.Printf("open dst file fail, err: %v", err)
+		vlog.Printf("open dst file fail | err: %v", err)
 
 		return
 	}
 	defer func() {
 		_ = dst.Close()
 	}()
-	log.Printf("copy file success, dst: %s, src: %s", dst.Name(), src.Name())
+	vlog.Printf("copy file success | dst: %s | src: %s", dst.Name(), src.Name())
 
 	return io.Copy(dst, src)
 }
@@ -144,12 +144,12 @@ func AppendFile(filePath string, data []byte, perm os.FileMode) error {
 
 // LinkFile link file.
 func LinkFile(sourceFilePath, targetFilePath string) error {
-	log.Printf("create symbolic link %s to %s", sourceFilePath, targetFilePath)
+	vlog.Printf("create symbolic link | source_file_path: %s | target_file_path: %s", sourceFilePath, targetFilePath)
 
 	// remove the exists link file before create
 	if stat, err := os.Stat(targetFilePath); err == nil && stat != nil {
 		if err := os.RemoveAll(targetFilePath); err != nil {
-			log.Printf("remove %s: %v", targetFilePath, err)
+			vlog.Printf("remove target file | target_file_path: %s | err: %v", targetFilePath, err)
 		}
 	}
 
@@ -240,7 +240,7 @@ func WriteDataToFile(filePath string, data io.Reader, timeout time.Duration) err
 	// Create temp file
 	out, err := os.Create(tempPath)
 	if err != nil {
-		log.Printf("can't create file: %v", err)
+		vlog.Printf("can't create file | err: %v", err)
 
 		return err
 	}

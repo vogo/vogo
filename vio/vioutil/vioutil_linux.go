@@ -23,12 +23,12 @@
 package vioutil
 
 import (
-	"log"
 	"os"
 	"os/user"
 	"strconv"
 	"syscall"
 
+	"github.com/vogo/vogo/vlog"
 	"github.com/vogo/vogo/vos/vuser"
 )
 
@@ -45,7 +45,7 @@ func Touch(fileName, userName string) error {
 	if !ExistFile(fileName) {
 		f, err := os.Create(fileName)
 		if err != nil {
-			log.Printf("failed to create file %s, error: %v", fileName, err)
+			vlog.Printf("failed to create file | file_name: %s | err: %v", fileName, err)
 			return err
 		}
 
@@ -54,7 +54,7 @@ func Touch(fileName, userName string) error {
 		if userName != "" && userName != vuser.CurrUserHome() {
 			u, err := user.Lookup(userName)
 			if err != nil {
-				log.Printf("failed to change file owner %s, error: %v", fileName, err)
+				vlog.Printf("failed to change file owner | file_name: %s | err: %v", fileName, err)
 				return err
 			}
 			uid, _ := strconv.Atoi(u.Uid)

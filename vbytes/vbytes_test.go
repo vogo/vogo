@@ -21,12 +21,12 @@ package vbytes_test
 
 import (
 	"io"
-	"log"
 	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/vogo/vogo/vbytes"
+	"github.com/vogo/vogo/vlog"
 )
 
 type treader struct {
@@ -40,7 +40,7 @@ func (r *treader) Read(buf []byte) (int, error) {
 		return 0, io.EOF
 	}
 
-	log.Println("read limit: ", r.readLimit, ", read count: ", r.readCount)
+	vlog.Infof("read info | read_limit: %d | read_count: %d", r.readLimit, r.readCount)
 	time.Sleep(time.Second)
 
 	return 1024, nil
@@ -49,7 +49,7 @@ func (r *treader) Read(buf []byte) (int, error) {
 type twriter struct{}
 
 func (w *twriter) Write(buf []byte) (int, error) {
-	log.Println("write ...")
+	vlog.Info("write ...")
 
 	return 1024, nil
 }

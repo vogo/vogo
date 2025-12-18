@@ -21,7 +21,6 @@ import (
 	"bytes"
 	"context"
 	"fmt"
-	"log"
 	"os"
 	"os/exec"
 	"regexp"
@@ -29,6 +28,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/vogo/vogo/vlog"
 	"github.com/vogo/vogo/vos/vuser"
 )
 
@@ -165,7 +165,7 @@ func addEnvPathBin(bin string) {
 	path := os.Getenv("PATH")
 	if !EnvPathContains(path, bin) {
 		if err := os.Setenv("PATH", path+vuser.EnvValueSplit+bin); err != nil {
-			log.Printf("set env error: %v", err)
+			vlog.Printf("set env error | err: %v", err)
 		}
 	}
 }
@@ -188,7 +188,7 @@ func loadEnvFromProfile(profile string) {
 
 	result, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("load env error: %v", err)
+		vlog.Printf("load env error | err: %v", err)
 
 		return
 	}
@@ -214,7 +214,7 @@ func loadEnvFromProfile(profile string) {
 
 		err = os.Setenv(key, string(line[index+1:]))
 		if err != nil {
-			log.Printf("failed to set env: %v", err)
+			vlog.Printf("failed to set env | err: %v", err)
 		}
 	}
 }

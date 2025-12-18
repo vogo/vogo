@@ -18,8 +18,9 @@
 package vstrconv
 
 import (
-	"log"
 	"strconv"
+
+	"github.com/vogo/vogo/vlog"
 )
 
 func EnsureInt(s string) int {
@@ -29,7 +30,7 @@ func EnsureInt(s string) int {
 func EnsureInt64(s string) int64 {
 	i, err := strconv.ParseInt(s, 10, 64)
 	if err != nil {
-		log.Panicf("parse int64 error: %v", err)
+		vlog.Panicf("parse int64 error | err: %v", err)
 	}
 	return i
 }
@@ -37,7 +38,7 @@ func EnsureInt64(s string) int64 {
 func EnsureInt32(s string) int32 {
 	i, err := strconv.ParseInt(s, 10, 32)
 	if err != nil {
-		log.Panicf("parse int32 error: %v", err)
+		vlog.Panicf("parse int32 error | err: %v", err)
 	}
 	return int32(i)
 }
@@ -45,7 +46,7 @@ func EnsureInt32(s string) int32 {
 func EnsureUint(s string) uint {
 	i, err := strconv.ParseUint(s, 10, 64)
 	if err != nil {
-		log.Panicf("parse uint error: %v", err)
+		vlog.Panicf("parse uint error | err: %v", err)
 	}
 	return uint(i)
 }
@@ -53,7 +54,7 @@ func EnsureUint(s string) uint {
 func EnsureBool(s string) bool {
 	b, err := strconv.ParseBool(s)
 	if err != nil {
-		log.Panicf("parse bool error: %v", err)
+		vlog.Panicf("parse bool error | err: %v", err)
 	}
 	return b
 }
@@ -61,7 +62,7 @@ func EnsureBool(s string) bool {
 func EnsureFloat64(s string) float64 {
 	f, err := strconv.ParseFloat(s, 64)
 	if err != nil {
-		log.Panicf("parse float64 error: %v", err)
+		vlog.Panicf("parse float64 error | err: %v", err)
 	}
 	return f
 }
@@ -69,7 +70,7 @@ func EnsureFloat64(s string) float64 {
 func EnsureFloat32(s string) float32 {
 	f, err := strconv.ParseFloat(s, 32)
 	if err != nil {
-		log.Panicf("parse float32 error: %v", err)
+		vlog.Panicf("parse float32 error | err: %v", err)
 	}
 	return float32(f)
 }
@@ -77,7 +78,7 @@ func EnsureFloat32(s string) float32 {
 func EnsureUint64(s string) uint64 {
 	i, err := strconv.ParseUint(s, 10, 64)
 	if err != nil {
-		log.Panicf("parse uint64 error: %v", err)
+		vlog.Panicf("parse uint64 error | err: %v", err)
 	}
 	return i
 }

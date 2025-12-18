@@ -20,10 +20,11 @@
 package vurl
 
 import (
-	"log"
 	"net"
 	"net/http"
 	"net/url"
+
+	"github.com/vogo/vogo/vlog"
 )
 
 // IsURLNetError whether net error for url request.
@@ -52,7 +53,7 @@ func RedirectURL(urlAddr string) string {
 	for {
 		resp, err := nonRedirectHTTPClient.Get(urlAddr)
 		if err != nil {
-			log.Printf("redirect url error: %v", err)
+			vlog.Printf("redirect url error | err: %v", err)
 
 			return urlAddr
 		}

@@ -22,11 +22,11 @@ package vrsa_test
 import (
 	"bytes"
 	"encoding/base64"
-	"log"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/vogo/vogo/vcrypto/vrsa"
+	"github.com/vogo/vogo/vlog"
 )
 
 func TestGenerateAndParse(t *testing.T) {
@@ -80,14 +80,14 @@ func TestRsa(t *testing.T) {
 	// ---------------sign/verify--------------------------
 	pubSign, err := vrsa.PublicSign(pub, b)
 	assert.Nil(t, err)
-	log.Println("public sign:", base64.StdEncoding.EncodeToString(pubSign))
+	vlog.Infof("public sign | sign: %s", base64.StdEncoding.EncodeToString(pubSign))
 
 	err = vrsa.PrivateVerify(pri, pubSign, b)
 	assert.Nil(t, err)
 
 	priSign, err := vrsa.PrivateSign(pri, b)
 	assert.Nil(t, err)
-	log.Println("private sign:", base64.StdEncoding.EncodeToString(priSign))
+	vlog.Infof("private sign | sign: %s", base64.StdEncoding.EncodeToString(priSign))
 
 	err = vrsa.PublicVerify(pub, priSign, b)
 	assert.Nil(t, err)
