@@ -214,9 +214,9 @@ func TestMapTo(t *testing.T) {
 	t.Run("int to string", func(t *testing.T) {
 		input := []int{1, 2, 3}
 		expected := []string{"1", "2", "3"}
-		result := MapTo(func(i int) string {
+		result := MapTo(input, func(i int) string {
 			return strconv.Itoa(i)
-		}, input)
+		})
 		if !reflect.DeepEqual(result, expected) {
 			t.Errorf("Expected %v, got %v", expected, result)
 		}
@@ -225,9 +225,9 @@ func TestMapTo(t *testing.T) {
 	t.Run("string to int length", func(t *testing.T) {
 		input := []string{"a", "bb", "ccc"}
 		expected := []int{1, 2, 3}
-		result := MapTo(func(s string) int {
+		result := MapTo(input, func(s string) int {
 			return len(s)
-		}, input)
+		})
 		if !reflect.DeepEqual(result, expected) {
 			t.Errorf("Expected %v, got %v", expected, result)
 		}
@@ -236,9 +236,9 @@ func TestMapTo(t *testing.T) {
 	t.Run("empty slice", func(t *testing.T) {
 		input := []int{}
 		expected := []string{}
-		result := MapTo(func(i int) string {
+		result := MapTo(input, func(i int) string {
 			return strconv.Itoa(i)
-		}, input)
+		})
 		if !reflect.DeepEqual(result, expected) {
 			t.Errorf("Expected %v, got %v", expected, result)
 		}

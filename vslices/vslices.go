@@ -36,7 +36,7 @@ func AppendIfCheckPass[T any](slice []T, elem T, checker func([]T, T) bool) []T 
 }
 
 // MapTo maps the slice from From to To.
-func MapTo[From, To any](mapper func(From) To, from []From) []To {
+func MapTo[From, To any](from []From, mapper func(From) To) []To {
 	to := make([]To, 0, len(from))
 	for _, v := range from {
 		to = append(to, mapper(v))
