@@ -54,9 +54,10 @@ const (
 )
 
 var (
-	Level            = LevelInfo
-	output io.Writer = os.Stdout
-	flag   int
+	Level              = LevelInfo
+	output   io.Writer = os.Stdout
+	flag     int
+	instance []byte
 )
 
 // SetLevel set logger Level
@@ -73,6 +74,11 @@ func SetOutput(w io.Writer) {
 // SetFlags set logger flags
 func SetFlags(f int) {
 	flag = f
+}
+
+// SetInstance set logger instance
+func SetInstance(s []byte) {
+	instance = s
 }
 
 // Writer return the logger writer
@@ -222,6 +228,12 @@ func WriteLog(tag, s string) {
 	appendNumber(buf, sec, 2)
 	*buf = append(*buf, '.')
 	appendNumber(buf, t.Nanosecond()/1e6, 3)
+
+	if len(instance) > 0 {
+		*buf = append(*buf, ' ', '[')
+		*buf = append(*buf, instance...)
+		*buf = append(*buf, ']')
+	}
 
 	*buf = append(*buf, ' ')
 	*buf = append(*buf, tag...)
