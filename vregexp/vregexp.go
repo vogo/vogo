@@ -32,7 +32,7 @@ func RegexGroupRender(renderExpression string) func([][]byte) []byte {
 	)
 
 	length := len(renderExpression)
-	for i := 0; i < length; i++ {
+	for i := range length {
 		v := renderExpression[i]
 
 		if v == '$' {

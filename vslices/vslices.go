@@ -17,12 +17,12 @@
 
 package vslices
 
+import "slices"
+
 // AppendIfNotExist appends elem to slice if elem does not exist in slice.
 func AppendIfNotExist[T comparable](slice []T, elem T) []T {
-	for _, v := range slice {
-		if v == elem {
-			return slice
-		}
+	if slices.Contains(slice, elem) {
+		return slice
 	}
 	return append(slice, elem)
 }

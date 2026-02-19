@@ -107,9 +107,9 @@ func ReadProcEnv(pid []byte) map[string]string {
 		return env
 	}
 
-	environ := bytes.Split(environData, []byte{0x0})
+	environ := bytes.SplitSeq(environData, []byte{0x0})
 
-	for _, e := range environ {
+	for e := range environ {
 		items := strings.SplitN(string(e), "=", 2)
 		if len(items) > 1 && vstrings.ContainsAny(items[0], "JAVA", "JRE", "PATH", "CATALINA", "USER", "HOME") {
 			env[items[0]] = items[1]

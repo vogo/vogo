@@ -20,6 +20,7 @@
 package vstrings
 
 import (
+	"slices"
 	"strings"
 	"unicode/utf8"
 )
@@ -30,13 +31,7 @@ func ContainsIn(items []string, item string) bool {
 		return false
 	}
 
-	for _, n := range items {
-		if item == n {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(items, item)
 }
 
 // ContainsAny checks if a string contains any of the test strings.
@@ -53,12 +48,12 @@ func ContainsAny(s string, test ...string) bool {
 // AfterFirst returns the substring after the first occurrence of sep in s.
 // It returns s if sep is not present in s.
 func AfterFirst(s, sep string) string {
-	index := strings.Index(s, sep)
-	if index < 0 {
+	_, after, ok := strings.Cut(s, sep)
+	if !ok {
 		return s
 	}
 
-	return s[index+len(sep):]
+	return after
 }
 
 // AfterLast returns the substring after the last occurrence of sep in s.
@@ -75,12 +70,12 @@ func AfterLast(s, sep string) string {
 // BeforeFirst returns the substring before the first occurrence of sep in s.
 // It returns s if sep is not present in s.
 func BeforeFirst(s, sep string) string {
-	index := strings.Index(s, sep)
-	if index < 0 {
+	before, _, ok := strings.Cut(s, sep)
+	if !ok {
 		return s
 	}
 
-	return s[:index]
+	return before
 }
 
 // BeforeFirstInclude returns the substring before the first occurrence of sep in s, include sep.

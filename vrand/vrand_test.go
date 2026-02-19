@@ -62,7 +62,7 @@ func TestIntn64Range(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Test multiple iterations to ensure consistency
-			for i := 0; i < 100; i++ {
+			for range 100 {
 				result := vrand.Intn64Range(tt.min, tt.max)
 
 				// Determine expected min and max (function swaps if min >= max)
@@ -99,7 +99,7 @@ func TestIntnRange(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Test multiple iterations to ensure consistency
-			for i := 0; i < 100; i++ {
+			for range 100 {
 				result := vrand.IntnRange(tt.min, tt.max)
 
 				// Determine expected min and max (function swaps if min >= max)
@@ -137,7 +137,7 @@ func TestFloat64Range(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			// Test multiple iterations to ensure consistency
-			for i := 0; i < 100; i++ {
+			for range 100 {
 				result := vrand.Float64Range(tt.min, tt.max)
 
 				// Determine expected min and max (function swaps if min >= max)
@@ -165,7 +165,7 @@ func TestFloat64Range_EdgeCases(t *testing.T) {
 
 	// Test very small differences
 	min, max := 1.0, 1.0000001
-	for i := 0; i < 10; i++ {
+	for range 10 {
 		result := vrand.Float64Range(min, max)
 		if result < min || result >= max {
 			t.Errorf("Float64Range(%f, %f) = %f, want value in range [%f, %f)",

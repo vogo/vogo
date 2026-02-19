@@ -9,6 +9,7 @@ license-check:
 
 format:
 		goimports -w -l .
+		go fix ./...
 		go fmt ./...
 		gofumpt -w .
 

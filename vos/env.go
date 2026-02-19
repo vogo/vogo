@@ -24,6 +24,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -130,13 +131,7 @@ func EnsureEnvBool(key string) bool {
 var ignoreLoadEnvs = []string{"JAVA_OPTS", "CLASSPATH"}
 
 func isLoadIgnoreEnv(e string) bool {
-	for _, env := range ignoreLoadEnvs {
-		if env == e {
-			return true
-		}
-	}
-
-	return false
+	return slices.Contains(ignoreLoadEnvs, e)
 }
 
 func LoadUserEnv() {
@@ -194,9 +189,9 @@ func loadEnvFromProfile(profile string) {
 	}
 
 	reg := regexp.MustCompile(`[A-Za-z0-9]+=.*`)
-	lines := bytes.Split(result, []byte{'\n'})
+	lines := bytes.SplitSeq(result, []byte{'\n'})
 
-	for _, line := range lines {
+	for line := range lines {
 		if len(line) == 0 {
 			continue
 		}

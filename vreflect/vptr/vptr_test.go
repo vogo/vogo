@@ -49,7 +49,7 @@ func TestOf(t *testing.T) {
 	})
 
 	t.Run("nil interface", func(t *testing.T) {
-		var v interface{} = nil
+		var v any = nil
 		p := Of(v)
 		assert.NotNil(t, p)
 		assert.Nil(t, *p)

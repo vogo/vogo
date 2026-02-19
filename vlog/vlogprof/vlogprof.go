@@ -33,9 +33,9 @@ func main() {
 	vlog.SetOutput(io.Discard)
 	vlog.SetFlags(vlog.Lfile)
 
-	for n := 0; n < 1024; n++ {
+	for range 1024 {
 		go func() {
-			for i := 0; i < 100000; i++ {
+			for range 100000 {
 				vlog.WriteLog("a", "b")
 			}
 		}()

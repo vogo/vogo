@@ -26,9 +26,9 @@ import (
 func TestAppendIfNotExist(t *testing.T) {
 	tests := []struct {
 		name     string
-		slice    interface{}
-		item     interface{}
-		expected interface{}
+		slice    any
+		item     any
+		expected any
 	}{
 		// Int slice tests
 		{"int empty slice", []int{}, 1, []int{1}},
@@ -60,7 +60,7 @@ func TestAppendIfNotExist(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var result interface{}
+			var result any
 			switch s := tt.slice.(type) {
 			case []int:
 				result = AppendIfNotExist(s, tt.item.(int))
@@ -111,10 +111,10 @@ func TestAppendIfCheckPass(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		slice    interface{}
-		item     interface{}
-		checker  interface{}
-		expected interface{}
+		slice    any
+		item     any
+		checker  any
+		expected any
 	}{
 		// Int slice tests
 		{"int len < 5 should append", []int{1, 2, 3}, 4, func(slice []int, elem int) bool { return len(slice) < 5 }, []int{1, 2, 3, 4}},
@@ -179,7 +179,7 @@ func TestAppendIfCheckPass(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var result interface{}
+			var result any
 			switch s := tt.slice.(type) {
 			case []int:
 				result = AppendIfCheckPass(s, tt.item.(int), tt.checker.(func([]int, int) bool))

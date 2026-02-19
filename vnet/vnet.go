@@ -125,9 +125,9 @@ func ConnectionCount() (established, listen, closeWait int, err error) {
 		return
 	}
 
-	counters := strings.Split(string(result), "\n")
+	counters := strings.SplitSeq(string(result), "\n")
 
-	for _, counter := range counters {
+	for counter := range counters {
 		values := strings.Split(counter, ":")
 		if len(values) == 2 {
 			switch values[0] {

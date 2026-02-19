@@ -73,7 +73,7 @@ func RandomBytes(src string, length int) []byte {
 
 	buf := make([]byte, length)
 
-	for i := 0; i < length; i++ {
+	for i := range length {
 		buf[i] = src[Intn(srcLen)]
 	}
 
